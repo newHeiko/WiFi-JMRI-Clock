@@ -1,25 +1,15 @@
-# wiFred
-wiThrottle-compatible hardware controller
+# WiFi-JMRI-Clock
+Wireless clock client to receive data from JMRI JSON server.
 
-This repo contains the first steps for three different, but closely related projects:
+Battery-powered WiFi interface for cheap analog wall clocks to get their time from a JMRI json server - hardware in hardware/wfred_loconet_clock.*
 
-1) Battery-powered WiFi interface for cheap analog wall clocks to get their time from a JMRI json server
-  - hardware in hardware/wfred_loconet_clock.* - same PCB as 3) below, only add the ESP12E, not the ATMega328P, not the loconet_interface...
-2) Battery-powered wiThrottle-compatible throttle
-  - hardware in hardware/wfred_rev2.*
-3) Battery-powered Fred-to-wiThrottle interface
-  - hardware in hardware/wfred_loconet_clock.* - same PCB as 1) above, don't add the clock connector
+It is built around ESP12E/ESP12F WiFi modules, powered by 2xAA cells and supposed to fit a Strapubox 6090 housing (Fredi form factor, but includes a battery compartment).
 
-All three are built around ESP12E/ESP12F WiFi modules, powered by 2xAA cells and supposed to fit a Strapubox 6090 housing
-(Fredi form factor, but includes a battery compartment) when the PCB is 0.8mm thick (or thinner).
+The contents of this repo has been generated from my wiFred-repo which was supposed to contain three different projects - but that turned out to be unworkable.
 
-The ESP source code consists of an Arduino sketch which contains the firmware for all three, configurable by a web interface (WIP).
-
-Barely tested AVR source code available for wiThrottle-compatible throttle.
+The ESP source code consists of an Arduino sketch, configurable by a web interface (WIP).
 
 In-Progress-Version of documentation available in documentation/ subfolder.
-
-Fred-to-wiThrottle interface sent to back burner, may never be done.
 
 I have ordered PCBs around Christmas 2017 and hope to have a proof of concept plus more/better organized docs by summer (2018).
 
