@@ -35,7 +35,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 5 5
+Sheet 3 3
 Title "Wireless FREDI (and clock interface)"
 Date "2017-11-19"
 Rev "0.2"

@@ -35,7 +35,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 5
+Sheet 1 3
 Title "Wireless FREDI (and clock interface)"
 Date "2017-11-19"
 Rev "0.2"
@@ -241,18 +241,6 @@ F 3 "" H 6600 3300 60  0001 C CNN
 	1    6600 3300
 	1    0    0    -1  
 $EndComp
-$Sheet
-S 4700 4200 1200 900 
-U 5920C945
-F0 "Controller" 60
-F1 "wfred-controller_rev2.sch" 60
-$EndSheet
-$Sheet
-S 4700 5300 1200 900 
-U 5920DD06
-F0 "Loconet-Interface" 60
-F1 "loconet-interface.sch" 60
-$EndSheet
 $Comp
 L C C102
 U 1 1 59210DD0

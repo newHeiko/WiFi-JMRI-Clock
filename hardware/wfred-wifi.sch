@@ -1,5 +1,4 @@
 EESchema Schematic File Version 2
-LIBS:wfred_rev2-rescue
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -31,15 +30,12 @@ LIBS:contrib
 LIBS:valves
 LIBS:my_devices
 LIBS:ESP8266
-LIBS:LDL1117S30R
-LIBS:MCP73831T-2ACI_OT
-LIBS:NCV8161BSN300T1G
-LIBS:wfred_rev2-cache
+LIBS:wfred_loconet_clock-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 4 4
+Sheet 2 3
 Title "Wireless FREDI (and clock interface)"
 Date "2017-11-19"
 Rev "0.2"
@@ -129,14 +125,6 @@ F 4 "RND 205-00631" V 7100 2400 60  0001 C CNN "Reichelt"
 $EndComp
 Wire Wire Line
 	6750 2500 6700 2500
-Wire Wire Line
-	7700 2300 8050 2300
-Wire Wire Line
-	7700 2400 8050 2400
-Text GLabel 8050 2300 2    60   Output ~ 0
-THIS_RXD
-Text GLabel 8050 2400 2    60   Input ~ 0
-THIS_TXD
 $Comp
 L CONN_2 P401
 U 1 1 5A11F720
@@ -151,17 +139,6 @@ F 4 "RND 205-00631" V 7100 2800 60  0001 C CNN "Reichelt"
 $EndComp
 Wire Wire Line
 	5200 2700 6750 2700
-$Comp
-L GND-RESCUE-wfred_rev2 #PWR041
-U 1 1 5A11FC27
-P 7850 2500
-F 0 "#PWR041" H 7850 2500 30  0001 C CNN
-F 1 "GND" H 7850 2430 30  0001 C CNN
-F 2 "" H 7850 2500 60  0001 C CNN
-F 3 "" H 7850 2500 60  0001 C CNN
-	1    7850 2500
-	1    0    0    -1  
-$EndComp
 $Comp
 L R-RESCUE-wfred_rev2 R403
 U 1 1 5A11FF91
@@ -202,22 +179,6 @@ Wire Wire Line
 	6300 2800 5200 2800
 Wire Wire Line
 	5200 2900 6100 2900
-$Comp
-L CONN_3 K402
-U 1 1 5A11F053
-P 7350 2300
-F 0 "K402" V 7300 2300 50  0000 C CNN
-F 1 "UART_AVR" V 7400 2300 40  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_1x03_Pitch2.54mm" H 7350 2300 60  0001 C CNN
-F 3 "" H 7350 2300 60  0001 C CNN
-F 4 "RND 205-00631" V 7350 2300 60  0001 C CNN "Reichelt"
-	1    7350 2300
-	-1   0    0    -1  
-$EndComp
-Wire Wire Line
-	7700 2200 7850 2200
-Wire Wire Line
-	7850 2200 7850 2500
 Wire Wire Line
 	6100 2200 6100 2700
 Connection ~ 6100 2700
