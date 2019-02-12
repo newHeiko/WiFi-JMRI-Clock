@@ -26,21 +26,25 @@
 
 #include "wifi.h"
 #include "config.h"
-#include "locoHandling.h"
 #include "lowbat.h"
 #include "stateMachine.h"
-#include "throttleHandling.h"
 
 // #define DEBUG
 
 state wiFredState = STATE_STARTUP;
 uint32_t stateTimeout = UINT32_MAX;
 
+// temporary getInputState
+bool getInputState(uint8_t input)
+{
+  return false;
+}
+
+
 void setup() {
 // put your setup code here, to run once:
 
   initConfig();
-  locoInit();
   initClock();
   
   Serial.begin(115200);
@@ -73,7 +77,6 @@ void loop() {
   switch(wiFredState)
   {
     case STATE_STARTUP:
-      setLEDvalues("0/0", "0/0", "100/200");
       if(!clockActive || getInputState(0) == true || getInputState(1) == true || getInputState(2) == true || getInputState(3) == true)
       {
         initWiFiSTA();
@@ -87,7 +90,6 @@ void loop() {
       break;
       
     case STATE_CONNECTING:
-      setLEDvalues("0/0", "0/0", "100/200");
       if(WiFi.status() == WL_CONNECTED)
       {
         switchState(STATE_CONNECTED);
@@ -122,7 +124,6 @@ void loop() {
       break;
 
     case STATE_CONFIG_STATION_WAITING:
-      setLEDvalues("200/200", "200/200", "200/200");
       if(millis() > stateTimeout)
       {
         shutdownWiFiSTA();
@@ -132,7 +133,6 @@ void loop() {
     // break;
     // intentional fall-through
     case STATE_CONFIG_STATION:
-      setLEDvalues("200/200", "200/200", "200/200");
       if(clockActive && (getInputState(0) == true || getInputState(1) == true || getInputState(2) == true || getInputState(3) == true))
       {
         shutdownWiFiConfigSTA();
@@ -141,7 +141,6 @@ void loop() {
       break;
 
     case STATE_CONFIG_STATION_COMING:
-      setLEDvalues("200/200", "200/200", "200/200");
       if(millis() > stateTimeout)
       {
          initWiFiConfigSTA();
@@ -150,7 +149,6 @@ void loop() {
       break;
 
     case STATE_LOWPOWER_WAITING:
-      setLEDvalues("0/0", "0/0", "1/250");
       if(millis() > stateTimeout)
       {
         shutdownWiFiSTA();
@@ -159,7 +157,6 @@ void loop() {
     // break;
     // intentional fall-through
     case STATE_LOWPOWER:
-      setLEDvalues("0/0", "0/0", "1/250");
       if(getInputState(0) == true || getInputState(1) == true || getInputState(2) == true || getInputState(3) == true)
       {
          switchState(STATE_STARTUP);
@@ -168,11 +165,8 @@ void loop() {
       
     case STATE_CONFIG_AP:
     // no way to get out of here except for restart
-      setLEDvalues("0/0", "0/0", "200/200");
       break;
   }
-
-  locoHandler();
 }
 
 void switchState(state newState, uint32_t timeout)
