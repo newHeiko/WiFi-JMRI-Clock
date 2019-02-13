@@ -46,16 +46,10 @@ Comment3 "Power supply"
 Comment4 "Master sheet for subsheets"
 $EndDescr
 Wire Wire Line
-	2450 2450 2450 2700
-Wire Wire Line
-	900  2600 2450 2600
-Wire Wire Line
 	2150 2400 2150 2700
 Connection ~ 2150 2600
 Wire Wire Line
 	1500 2800 1850 2800
-Wire Wire Line
-	1850 2450 1850 3300
 Wire Wire Line
 	2150 3100 2150 3300
 Wire Wire Line
@@ -278,30 +272,6 @@ F 4 "X5R-G0805 22/25" H 6600 2600 60  0001 C CNN "Reichelt"
 	1    0    0    -1  
 $EndComp
 $Comp
-L PWR_FLAG #FLG011
-U 1 1 59214833
-P 2450 2450
-F 0 "#FLG011" H 2450 2545 30  0001 C CNN
-F 1 "PWR_FLAG" H 2450 2630 30  0000 C CNN
-F 2 "" H 2450 2450 60  0001 C CNN
-F 3 "" H 2450 2450 60  0001 C CNN
-	1    2450 2450
-	1    0    0    -1  
-$EndComp
-Connection ~ 2450 2600
-$Comp
-L PWR_FLAG #FLG012
-U 1 1 59214BB2
-P 1850 2450
-F 0 "#FLG012" H 1850 2545 30  0001 C CNN
-F 1 "PWR_FLAG" H 1850 2630 30  0000 C CNN
-F 2 "" H 1850 2450 60  0001 C CNN
-F 3 "" H 1850 2450 60  0001 C CNN
-	1    1850 2450
-	1    0    0    -1  
-$EndComp
-Connection ~ 1850 2800
-$Comp
 L L6920D U101
 U 1 1 5920B393
 P 4300 2500
@@ -346,4 +316,10 @@ F 4 "KEYSTONE 1013" H 1200 4900 60  0001 C CNN "Reichelt"
 	1    1200 4900
 	0    1    1    0   
 $EndComp
+Wire Wire Line
+	2450 2700 2450 2600
+Wire Wire Line
+	2450 2600 900  2600
+Wire Wire Line
+	1850 2800 1850 3300
 $EndSCHEMATC
