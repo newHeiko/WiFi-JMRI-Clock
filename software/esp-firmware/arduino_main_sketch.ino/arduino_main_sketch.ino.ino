@@ -28,22 +28,17 @@
 #include "config.h"
 #include "lowbat.h"
 #include "stateMachine.h"
+#include "ui.h"
 
 // #define DEBUG
 
 state wiFredState = STATE_STARTUP;
 uint32_t stateTimeout = UINT32_MAX;
 
-// temporary getInputState
-bool getInputState(uint8_t input)
-{
-  return false;
-}
-
-
 void setup() {
 // put your setup code here, to run once:
 
+  initUI();
   initConfig();
   initClock();
   
@@ -77,21 +72,16 @@ void loop() {
   switch(wiFredState)
   {
     case STATE_STARTUP:
-      if(!clockActive || getInputState(0) == true || getInputState(1) == true || getInputState(2) == true || getInputState(3) == true)
-      {
-        initWiFiSTA();
-        switchState(STATE_CONNECTING, 60 * 1000);
-      }
-      else
-      {
-        initWiFiAP();
-        switchState(STATE_CONFIG_AP);
-      }
+      setLED(100, 200);
+      initWiFiSTA();
+      switchState(STATE_CONNECTING, 60 * 1000);
       break;
       
     case STATE_CONNECTING:
+      setLED(100, 200);
       if(WiFi.status() == WL_CONNECTED)
       {
+        setLED(25, 50);
         switchState(STATE_CONNECTED);
       }
       else if(millis() > stateTimeout)
@@ -102,7 +92,7 @@ void loop() {
       break;
 
     case STATE_CONNECTED:
-      if(getInputState(0) == false && getInputState(1) == false && getInputState(2) == false && getInputState(3) == false)
+      if(getInputPressed() == true)
       {
         if(clockActive)
         {
@@ -118,33 +108,26 @@ void loop() {
 
       if(WiFi.status() != WL_CONNECTED)
       {
-        initWiFiSTA();
-        switchState(STATE_CONNECTING, 30 * 1000);
+        switchState(STATE_STARTUP);
       }
       break;
 
     case STATE_CONFIG_STATION_WAITING:
-      if(millis() > stateTimeout)
+      setLED(100, 100);
+      if(millis() > stateTimeout || getInputPressed() == true)
       {
-        shutdownWiFiSTA();
-        switchState(STATE_LOWPOWER);
-        break;
-      }
-    // break;
-    // intentional fall-through
-    case STATE_CONFIG_STATION:
-      if(clockActive && (getInputState(0) == true || getInputState(1) == true || getInputState(2) == true || getInputState(3) == true))
-      {
+        setLED(25, 50);
         shutdownWiFiConfigSTA();
         switchState(STATE_CONNECTED);
       }
       break;
 
-    case STATE_CONFIG_STATION_COMING:
-      if(millis() > stateTimeout)
+    case STATE_CONFIG_STATION:
+      if(getInputPressed() == true)
       {
-         initWiFiConfigSTA();
-         switchState(STATE_CONFIG_STATION);
+        setLED(25, 50);
+        shutdownWiFiConfigSTA();
+        switchState(STATE_CONNECTED);
       }
       break;
 
@@ -164,6 +147,7 @@ void loop() {
       break;
       
     case STATE_CONFIG_AP:
+      setLED(180, 200);
     // no way to get out of here except for restart
       break;
   }

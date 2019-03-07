@@ -26,6 +26,7 @@
 #include "config.h"
 #include "lowbat.h"
 #include "stateMachine.h"
+#include "ui.h"
 
 uint8_t clockPulseLength = 40;
 uint8_t clockMaxRate = 10;
@@ -173,6 +174,8 @@ void clockHandler(void)
           // is this the data line we are looking for?
           if(line.indexOf("{\"type\":\"time\"") != -1)
           {
+            // turn off LED at first nicely received response
+            setLED(0, 100);
             flagGetTime = false;
 
             client.flush();
