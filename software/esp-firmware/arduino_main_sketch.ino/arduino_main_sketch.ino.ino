@@ -69,6 +69,13 @@ void loop() {
   }
 #endif
 
+  if(emptyBattery)
+  {
+    WiFi.disconnect();
+    WiFi.mode(WIFI_OFF);
+    ESP.deepSleep(0);
+  }
+  
   switch(wiFredState)
   {
     case STATE_STARTUP:
@@ -131,21 +138,6 @@ void loop() {
       }
       break;
 
-    case STATE_LOWPOWER_WAITING:
-      if(millis() > stateTimeout)
-      {
-        shutdownWiFiSTA();
-        switchState(STATE_LOWPOWER);
-      }
-    // break;
-    // intentional fall-through
-    case STATE_LOWPOWER:
-      if(getInputState(0) == true || getInputState(1) == true || getInputState(2) == true || getInputState(3) == true)
-      {
-         switchState(STATE_STARTUP);
-      }
-      break;
-      
     case STATE_CONFIG_AP:
       setLED(180, 200);
     // no way to get out of here except for restart

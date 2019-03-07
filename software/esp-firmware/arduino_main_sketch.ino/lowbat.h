@@ -25,7 +25,20 @@
 #ifndef _LOWBAT_H_
 #define _LOWBAT_H_
 
-#include <stdbool.h>
+/**
+ * Battery voltage for the device to detect low battery status
+ * Will change behaviour of device
+ */
+#define LOW_BATTERY_MILLIVOLTS 2100
+/**
+ * Battery voltage for the device to shut down (deep sleep, never wakeup)
+ */
+#define EMPTY_BATTERY_MILLIVOLTS 1800
+
+/**
+ * Periodically check battery voltage and react if falling below the above defined thresholds
+ */
+void lowBatteryHandler(void);
 
 /**
  * Set to true when the device receives a BLOW message, false when receiving a BOK message
@@ -38,7 +51,7 @@ extern bool lowBattery;
 extern bool emptyBattery;
 
 /**
- * Battery voltage in milliVolt
+ * Battery voltage in milliVolt (capped at approx. 3V)
  */
 extern uint16_t batteryVoltage;
 
