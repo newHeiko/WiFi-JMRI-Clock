@@ -30,7 +30,6 @@
 
 uint8_t clockPulseLength = 40;
 uint8_t clockMaxRate = 10;
-bool clockActive = false;
 int8_t clockOffset;
 
 clockInfo ourTime;
@@ -78,10 +77,6 @@ void secondTickHandler(void)
 
 void setClockOutputs(void)
 {
-  if(!clockActive)
-  {
-    return;
-  }
   static uint8_t edgeCounter;
   edgeCounter++;
   edgeCounter %= 4;
@@ -104,14 +99,9 @@ void setClockOutputs(void)
 
 void networkSecondHandler(void)
 {
-  if(!clockActive)
-  {
-    return;
-  }
   plusOneSecond(&networkTime);
   flagNewTime = true;
 }
-
 
 void initClock(void)
 {
@@ -154,15 +144,6 @@ void initClock(void)
 
 void clockHandler(void)
 {
-  if(!clockActive)
-  {
-    digitalWrite(CLOCK1_PIN, HIGH);
-    digitalWrite(CLOCK2_PIN, HIGH);
-    ourSecond.detach();
-    networkSecond.detach();
-  }
-  else
-  {
     // try to get time from network if we are connected to WLAN
     if(flagGetTime && wiFredState == STATE_CONNECTED)
     {
@@ -300,6 +281,5 @@ void clockHandler(void)
           ourSecond.detach();
         }
       }
-    }
   }
 }

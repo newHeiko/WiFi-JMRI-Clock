@@ -83,7 +83,6 @@ void initConfig(void)
     eepromReadBlock((uint8_t *) throttleName, NAME, sizeof(throttleName)/sizeof(throttleName[0]));
     throttleName[sizeof(throttleName)/sizeof(throttleName[0]) - 1] = '\0';
     wifiSaved = true;
-    clockActive = (bool) EEPROM.read(CLOCK_ACTIVE);
     clockMaxRate = EEPROM.read(CLOCK_MAX_RATE);
     clockPulseLength = EEPROM.read(CLOCK_PULSE_LENGTH);
     clockOffset = (int8_t) EEPROM.read(CLOCK_OFFSET);
@@ -95,7 +94,6 @@ void initConfig(void)
 
 void saveClockConfig()
 {
-  EEPROM.write(CLOCK_ACTIVE, clockActive);
   EEPROM.write(CLOCK_MAX_RATE, clockMaxRate);
   EEPROM.write(CLOCK_PULSE_LENGTH, clockPulseLength);
   EEPROM.write(CLOCK_OFFSET, clockOffset);

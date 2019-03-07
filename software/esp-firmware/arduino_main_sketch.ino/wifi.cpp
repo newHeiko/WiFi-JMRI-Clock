@@ -146,7 +146,6 @@ void writeClockPage()
   // check if this is a "set configuration" request
   if(server.hasArg("clock.serverName") && server.hasArg("clock.serverPort") && server.hasArg("clock.startUp"))
   {
-    clockActive = server.hasArg("clock.enabled");
     readString(clockServer.name, sizeof(clockServer.name)/sizeof(clockServer.name[0]), server.arg("clock.serverName"));
     clockServer.port = server.arg("clock.serverPort").toInt();
     String startupString = server.arg("clock.startUp");
@@ -181,7 +180,6 @@ void writeClockPage()
               + "<html><head><title>wiFred configuration page</title></head>\r\n"
               + "<body><h1>Clock configuration</h1>\r\n"
               + "<form action=\"clock.html\" method=\"get\"><table border=0>"
-              + "<tr><td>Enabled?</td><td><input type=\"checkbox\" name=\"clock.enabled\"" + (clockActive ? " checked" : "") + "></td></tr>"
               + "<tr><td>Clock server and port: </td>"
                 + "<td>http://<input type=\"text\" name=\"clock.serverName\" value=\"" + clockServer.name + "\">:<input type=\"text\" name=\"clock.serverPort\" value=\"" + clockServer.port + "\">/json/time</td></tr>"
               + "<tr><td>Startup time (format: H:M:S):</td><td><input type=\"text\" name=\"clock.startUp\" value=\"" + startupString + "\"></td></tr>"

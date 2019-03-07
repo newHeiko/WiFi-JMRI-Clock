@@ -34,7 +34,6 @@
 
 extern uint8_t clockPulseLength;
 extern uint8_t clockMaxRate;
-extern bool clockActive;
 extern int8_t clockOffset;
 
 typedef struct

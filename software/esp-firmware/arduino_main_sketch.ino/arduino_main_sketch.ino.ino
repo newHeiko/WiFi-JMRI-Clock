@@ -101,15 +101,8 @@ void loop() {
     case STATE_CONNECTED:
       if(getInputPressed() == true)
       {
-        if(clockActive)
-        {
-          initWiFiConfigSTA();
-          switchState(STATE_CONFIG_STATION_WAITING, 30 * 1000);
-        }
-        else
-        {
-          switchState(STATE_LOWPOWER_WAITING, 30 * 1000);
-        }
+        initWiFiConfigSTA();
+        switchState(STATE_CONFIG_STATION_WAITING, 120 * 1000);
         break;
       }
 
