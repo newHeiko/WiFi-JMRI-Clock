@@ -36,8 +36,6 @@ void initWiFi(void);
 
 void initWiFiSTA(void);
 
-void shutdownWiFiSTA(void);
-
 void initWiFiAP(void);
 
 void initWiFiConfigSTA(void);

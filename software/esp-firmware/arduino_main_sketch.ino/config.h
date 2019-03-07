@@ -68,12 +68,5 @@ void saveClockConfig();
  */
 void saveGeneralConfig();
 
-/**
- * Save loco configuration (also call to save function mappings)
- * 
- * @param mainSave  Set to false when only function mappings are new
- */
-void saveLocoConfig(bool mainSave = true);
-
 #endif
 

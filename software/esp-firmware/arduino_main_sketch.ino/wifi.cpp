@@ -78,12 +78,6 @@ void initWiFiSTA(void)
   WiFi.begin(wlan.ssid, wlan.key);
 }
 
-void shutdownWiFiSTA(void)
-{
-  WiFi.disconnect();
-  WiFi.mode(WIFI_OFF);
-}
-
 void initWiFiAP(void)
 {
   // open an AP for configuration if connection failed
