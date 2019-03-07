@@ -143,15 +143,15 @@ void writeClockPage()
     readString(clockServer.name, sizeof(clockServer.name)/sizeof(clockServer.name[0]), server.arg("clock.serverName"));
     clockServer.port = server.arg("clock.serverPort").toInt();
     String startupString = server.arg("clock.startUp");
-    alignas(4) uint8_t hours, minutes, seconds;
+    alignas(4) unsigned int hours, minutes, seconds;
     
     if(sscanf(startupString.c_str(), "%u:%u:%u", &hours, &minutes, &seconds) == 3)
     {
       if(hours < 24 && minutes < 60 && seconds < 60)
       {
-        startupTime.hours = hours % 12;
-        startupTime.minutes = minutes;
-        startupTime.seconds = seconds;
+        startupTime.hours = (uint8_t) hours % 12;
+        startupTime.minutes = (uint8_t) minutes;
+        startupTime.seconds = (uint8_t) seconds;
       }
     }
     clockOffset = server.arg("clock.offset").toInt();
