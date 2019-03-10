@@ -37,7 +37,7 @@
 void lowBatteryHandler(void)
 {
   #if NUM_AD_SAMPLES > 64
-  #warning “Increase data type size of buffer for more than 64 samples"
+  #warning "Increase data type size of buffer for more than 64 samples"
   #endif
   static uint16_t buffer = 0;
   static uint8_t index = 0;
