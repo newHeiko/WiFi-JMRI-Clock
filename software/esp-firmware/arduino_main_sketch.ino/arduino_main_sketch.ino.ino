@@ -99,7 +99,7 @@ void loop() {
       break;
 
     case STATE_CONNECTED:
-      if(getInputPressed() == true)
+      if(getInputState() == true)
       {
         initWiFiConfigSTA();
         switchState(STATE_CONFIG_STATION_WAITING, 120 * 1000);
@@ -114,7 +114,7 @@ void loop() {
 
     case STATE_CONFIG_STATION_WAITING:
       setLED(100, 100);
-      if(millis() > stateTimeout || getInputPressed() == true)
+      if(millis() > stateTimeout || getInputState() == false)
       {
         setLED(25, 50);
         shutdownWiFiConfigSTA();
@@ -123,7 +123,7 @@ void loop() {
       break;
 
     case STATE_CONFIG_STATION:
-      if(getInputPressed() == true)
+      if(getInputState() == false)
       {
         setLED(25, 50);
         shutdownWiFiConfigSTA();
