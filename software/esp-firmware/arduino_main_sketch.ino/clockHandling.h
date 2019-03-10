@@ -26,7 +26,7 @@
 #include <stdbool.h>
 
 // pins on which the clock outputs are located
-#define CLOCK1_PIN 6
+#define CLOCK1_PIN 4
 #define CLOCK2_PIN 5
 
 // maximum value for which times are considered to be the same
