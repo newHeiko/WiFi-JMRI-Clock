@@ -58,6 +58,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   handleWiFi();
   clockHandler();
+  lowBatteryHandler();
 
 #ifdef DEBUG
   static uint32_t test = 0;
