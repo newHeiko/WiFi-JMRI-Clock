@@ -22,8 +22,8 @@
 #ifndef _UI_H_
 #define _UI_H_
 
-#define LED_PIN 14
-#define KEY_PIN 7
+#define LED_PIN 5
+#define KEY_PIN 13
 
 /**
  * Setup pullup resistor, pin output mode, callback ticker etc. at startup
