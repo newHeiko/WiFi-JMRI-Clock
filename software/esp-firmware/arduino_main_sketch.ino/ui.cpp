@@ -19,7 +19,7 @@
  * and to read in an input button
  */
 
-#include <Arduino.h>
+#include <ESP8266WiFi.h>
 #include <Ticker.h>
 #include "ui.h"
 

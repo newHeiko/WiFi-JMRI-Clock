@@ -85,7 +85,7 @@ void initWiFiAP(void)
   WiFi.mode(WIFI_AP);
   uint8_t mac[6];
   WiFi.macAddress(mac);
-  String ssid = "wiFred-config" + String(mac[0], 16) + String(mac[5], 16);
+  String ssid = "wiClock-config" + String(mac[0], 16) + String(mac[5], 16);
   #ifdef DEBUG
   Serial.println();
   Serial.print("Not connected, setting up AP at ");
@@ -112,7 +112,7 @@ void writeMainPage()
   }
 
   String resp = String("<!DOCTYPE HTML>\r\n")
-              + "<html><head><title>wiFred configuration page</title></head>\r\n"
+              + "<html><head><title>wiClock configuration page</title></head>\r\n"
               + "<body><h1>General configuration</h1>\r\n"
               + "<form action=\"index.html\" method=\"get\"><table border=0>"
               + "<tr><td>Throttle name (max " + String(sizeof(throttleName)/sizeof(throttleName[0]) - 1) + " chars):</td><td><input type=\"text\" name=\"throttleName\" value=\"" + throttleName + "\"></td></tr>"

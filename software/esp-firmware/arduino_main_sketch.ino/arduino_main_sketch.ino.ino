@@ -132,7 +132,7 @@ void loop() {
       break;
 
     case STATE_CONFIG_AP:
-      setLED(180, 200);
+      setLED(190, 200);
     // no way to get out of here except for restart
       break;
   }
