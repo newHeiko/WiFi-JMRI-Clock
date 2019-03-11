@@ -29,7 +29,7 @@
 
 #define SERVER_CHARS 21
 
-#define EEPROM_VALID 4
+#define EEPROM_VALID 5
 
 typedef struct
 {
