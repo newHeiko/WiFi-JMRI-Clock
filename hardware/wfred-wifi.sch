@@ -94,7 +94,7 @@ $EndComp
 Wire Wire Line
 	7100 2500 7100 3700
 Wire Wire Line
-	7100 3000 5600 3000
+	5600 3000 7150 3000
 Connection ~ 7100 3000
 $Comp
 L VCC #PWR013
@@ -128,17 +128,17 @@ Wire Wire Line
 $Comp
 L CONN_2 P201
 U 1 1 5A11F720
-P 7500 2800
-F 0 "P201" V 7450 2800 40  0000 C CNN
-F 1 "ESP_BOOTLOAD" V 7550 2800 40  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_1x02_Pitch2.54mm" H 7500 2800 60  0001 C CNN
-F 3 "" H 7500 2800 60  0001 C CNN
-F 4 "RND 205-00631" V 7500 2800 60  0001 C CNN "Reichelt"
-	1    7500 2800
+P 7500 2900
+F 0 "P201" V 7450 2900 40  0000 C CNN
+F 1 "ESP_BOOTLOAD" V 7550 2900 40  0000 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x02_Pitch2.54mm" H 7500 2900 60  0001 C CNN
+F 3 "" H 7500 2900 60  0001 C CNN
+F 4 "RND 205-00631" V 7500 2900 60  0001 C CNN "Reichelt"
+	1    7500 2900
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5600 2700 7150 2700
+	5600 2700 7700 2700
 $Comp
 L R R201
 U 1 1 5A11FF91
@@ -180,7 +180,7 @@ Wire Wire Line
 Wire Wire Line
 	5600 2900 6500 2900
 Wire Wire Line
-	6500 2200 6500 2700
+	6500 2700 6500 2200
 Connection ~ 6500 2700
 Wire Wire Line
 	6700 2200 6700 2800
@@ -206,9 +206,6 @@ Wire Wire Line
 	6500 3600 6500 3700
 Wire Wire Line
 	6500 1600 6700 1600
-Wire Wire Line
-	7150 2900 7100 2900
-Connection ~ 7100 2900
 $Comp
 L C C201
 U 1 1 5A127BCA
@@ -277,7 +274,7 @@ Wire Wire Line
 Text GLabel 3600 2700 0    60   Output ~ 0
 CLOCK2
 Text GLabel 3600 2900 0    60   Input ~ 0
-KEY
+KEY_CONF
 $Comp
 L CAPAPOL C203
 U 1 1 5C82A7FA
@@ -314,7 +311,6 @@ Wire Wire Line
 	3600 2900 3800 2900
 Wire Wire Line
 	5600 2500 5800 2500
-NoConn ~ 5600 2600
 $Comp
 L GND #PWR018
 U 1 1 5C85530A
@@ -355,7 +351,21 @@ Wire Wire Line
 Connection ~ 2600 2400
 Wire Wire Line
 	2600 3300 2600 3700
-NoConn ~ 3800 2600
 Wire Wire Line
 	3800 2800 3600 2800
+Text GLabel 3600 2600 0    60   Input ~ 0
+KEY
+Wire Wire Line
+	3600 2600 3800 2600
+Text GLabel 5800 2600 2    60   Input ~ 0
+KEY_HOUR
+Text GLabel 7700 2700 2    60   Input ~ 0
+KEY_MINUTE
+Wire Wire Line
+	7150 2800 6800 2800
+Wire Wire Line
+	6800 2800 6800 2700
+Connection ~ 6800 2700
+Wire Wire Line
+	5800 2600 5600 2600
 $EndSCHEMATC
