@@ -23,7 +23,9 @@
 #define _UI_H_
 
 #define LED_PIN 5
-#define KEY_PIN 13
+const byte KEY_PIN[4] = { 13, 4, 0, 16 };
+
+enum keys { KEY_CONFIG, KEY_HOUR, KEY_MINUTE, KEY };
 
 /**
  * Setup pullup resistor, pin output mode, callback ticker etc. at startup
@@ -43,13 +45,13 @@ void setLED(uint16_t onTime, uint16_t dutyCycle);
  * 
  * @returns true if input button is pressed (pin value is low)
  */
-bool getInputState(void);
+bool getInputState(keys key);
 
 /**
  * Get input state changes from input button
  * 
  * @returns true if button has been pressed since last call
  */
-bool getInputPressed(void);
+bool getInputPressed(keys key);
 
 #endif

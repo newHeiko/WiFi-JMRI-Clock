@@ -28,32 +28,34 @@ Ticker ledOnTime;
 
 Ticker debounceInput;
 
-bool inputState = false;
-bool inputPressed = false;
+bool inputState[4] = { false, false, false, false };
+bool inputPressed[4] = { false, false, false, false };
 
 uint16_t m_onTime;
 uint16_t m_dutyCycle;
 
 /**
- * Get state of input button
+ * Get state of input buttons
  * 
- * @returns true if input button is pressed (pin value is low)
+ * @param the key to query
+ * @return true if input button is pressed (pin value is low)
  */
-bool getInputState(void)
+bool getInputState(keys key)
 {
-  return inputState;
+  return inputState[key];
 }
 
 /**
  * Get input state changes from input button
  * 
+ * @param the key to query
  * @returns true if button has been pressed since last call
  */
-bool getInputPressed(void)
+bool getInputPressed(keys key)
 {
-  if(inputPressed)
+  if(inputPressed[key])
   {
-    inputPressed = false;
+    inputPressed[key] = false;
     return true;
   }
   return false;
@@ -64,36 +66,39 @@ bool getInputPressed(void)
  */
 void debounceInputCallback(void)
 {
-  static uint8_t counter = 0;
+  static uint8_t counter[4] = {0, 0, 0, 0};
 
-  if(digitalRead(KEY_PIN) == LOW && inputState == false)
+  for(uint8_t index = KEY_CONFIG; index <= KEY; index++)
   {
-    if(counter >= 4)
+    if(digitalRead(KEY_PIN[index]) == LOW && inputState[index] == false)
     {
-      inputState = true;
-      inputPressed = true;
-      counter = 0;
+      if(counter[index] >= 4)
+      {
+        inputState[index] = true;
+        inputPressed[index] = true;
+        counter[index] = 0;
+      }
+      else
+      {
+        counter[index]++;
+      }
+    }
+    else if(digitalRead(KEY_PIN[index]) == HIGH && inputState[index] == true)
+    {
+      if (counter[index] >= 4)
+      {
+        inputState[index] = false;
+        counter[index] = 0;
+      }
+      else
+      {
+        counter[index]++;
+      }
     }
     else
     {
-      counter++;
+      counter[index] = 0;
     }
-  }
-  else if(digitalRead(KEY_PIN) == HIGH && inputState == true)
-  {
-    if (counter >= 4)
-    {
-      inputState = false;
-      counter = 0;
-    }
-    else
-    {
-      counter++;
-    }
-  }
-  else
-  {
-    counter = 0;
   }
 }
 
@@ -154,7 +159,10 @@ void setLED(uint16_t onTime, uint16_t dutyCycle)
  */
 void initUI(void)
 {
-  pinMode(KEY_PIN, INPUT_PULLUP);
+  for(uint8_t index = KEY_CONFIG; index < KEY; index++)
+  {
+    pinMode(KEY_PIN[index], INPUT_PULLUP);
+  }
   pinMode(LED_PIN, OUTPUT);
 
   digitalWrite(LED_PIN, LOW);
