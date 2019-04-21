@@ -22,7 +22,6 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
-#include <DNSServer.h>
 #include "wifi.h"
 #include "clockHandling.h"
 #include "config.h"
@@ -35,7 +34,6 @@
 t_wlan wlan;
 
 ESP8266WebServer server(80);
-DNSServer dnsServer;
 
 void readString(char * dest, size_t maxLength, String input)
 {
@@ -46,7 +44,6 @@ void readString(char * dest, size_t maxLength, String input)
 void handleWiFi(void)
 {
   server.handleClient();
-  dnsServer.processNextRequest();
 }
 
 void initWiFiConfigSTA(void)
