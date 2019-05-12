@@ -90,6 +90,7 @@ void loop() {
       if(WiFi.status() == WL_CONNECTED)
       {
         setLED(25, 50);
+        initMDNS();
         switchState(STATE_CONNECTED);
       }
       else if(millis() > stateTimeout)

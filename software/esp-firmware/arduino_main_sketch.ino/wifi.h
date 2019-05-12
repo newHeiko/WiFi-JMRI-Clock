@@ -36,6 +36,8 @@ void initWiFi(void);
 
 void initWiFiSTA(void);
 
+void initMDNS(void);
+
 void initWiFiAP(void);
 
 void initWiFiConfigSTA(void);
