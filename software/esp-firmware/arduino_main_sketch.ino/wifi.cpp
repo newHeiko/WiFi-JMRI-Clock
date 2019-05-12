@@ -282,6 +282,7 @@ void writeStatusPage()
 
 void restartESP()
 {
+  MDNS.removeService(NULL, "http", "tcp");
   ESP.restart();
 }
 
