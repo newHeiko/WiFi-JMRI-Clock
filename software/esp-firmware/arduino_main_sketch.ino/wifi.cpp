@@ -33,7 +33,7 @@
 #include "Ticker.h"
 #include "stateMachine.h"
 
-#define DEBUG
+// #define DEBUG
 
 t_wlan wlan;
 

@@ -22,8 +22,8 @@
 #ifndef _UI_H_
 #define _UI_H_
 
-#define LED_PIN 16
-const byte KEY_PIN[4] = { 0, 4, 13, 16 };
+#define LED_PIN 5
+const byte KEY_PIN[4] = { 13, 4, 0, 16 };
 
 enum keys { KEY_CONFIG, KEY_HOUR, KEY_MINUTE, KEY };
 
