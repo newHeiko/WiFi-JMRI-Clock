@@ -22,6 +22,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
+#include <ESP8266HTTPUpdateServer.h>
 #include <ESP8266mDNS.h>
 #include <DNSServer.h>
 
@@ -38,6 +39,7 @@ t_wlan wlan;
 
 ESP8266WebServer server(80);
 DNSServer dnsServer;
+ESP8266HTTPUpdateServer updater;
 
 void readString(char * dest, size_t maxLength, String input)
 {
@@ -199,7 +201,9 @@ void writeMainPage()
   resp        += String("<hr>Restart system to enable new WiFi settings<hr>\r\n")
                  + "<a href=restart.html>Restart system to enable new WiFi settings</a>\r\n"
                  + "<hr><hr>Status page<hr>\r\n"
-                 + "<a href=status.html>wiFred status subpage</a>\r\n"
+                 + "<a href=status.html>wiClock status subpage</a>\r\n"
+                 + "<hr><hr>Update firmware<hr>\r\n"
+                 + "<a href=update>Update wiClock firmware</a>\r\n"
                  + "</body></html>";
   server.send(200, "text/html", resp);
 }
@@ -288,6 +292,8 @@ void initWiFi(void)
   server.on("/status.html", writeStatusPage);
   server.on("/restart.html", restartESP);
   server.onNotFound(writeMainPage);
+
+  updater.setup(&server);
 
   // start configuration webserver
   server.begin();
