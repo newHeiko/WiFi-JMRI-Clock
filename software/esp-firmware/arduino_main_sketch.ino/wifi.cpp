@@ -22,6 +22,10 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
+#include <ESP8266HTTPUpdateServer.h>
+#include <ESP8266mDNS.h>
+#include <DNSServer.h>
+
 #include "wifi.h"
 #include "clockHandling.h"
 #include "config.h"
@@ -29,11 +33,13 @@
 #include "Ticker.h"
 #include "stateMachine.h"
 
-// #define DEBUG
+#define DEBUG
 
 t_wlan wlan;
 
 ESP8266WebServer server(80);
+DNSServer dnsServer;
+ESP8266HTTPUpdateServer updater;
 
 void readString(char * dest, size_t maxLength, String input)
 {
@@ -44,21 +50,58 @@ void readString(char * dest, size_t maxLength, String input)
 void handleWiFi(void)
 {
   server.handleClient();
+  switch(wiFredState)
+  {
+    case STATE_CONFIG_AP:
+      dnsServer.processNextRequest();
+      // intentional fall-through
+
+    case STATE_CONNECTED:
+    case STATE_CONFIG_STATION:
+    case STATE_CONFIG_STATION_WAITING:
+      MDNS.update();
+      break;
+
+    case STATE_STARTUP:
+    case STATE_CONNECTING:
+      break;
+  }
 }
 
 void initWiFiConfigSTA(void)
 {
-  // change IP address to config page
-  // replace last byte in IP address with 253 (configuration IP address)
-  IPAddress configIP = WiFi.localIP();;
-  configIP[3] = 253;
-  WiFi.config(configIP, WiFi.gatewayIP(), WiFi.subnetMask());
+  // stop listening on <throttleName>.local, start listening on config.local
+  MDNS.removeService(NULL, "http", "tcp");
+  MDNS.setHostname("config");
+  MDNS.addService("http", "tcp", 80);
 }
 
 void shutdownWiFiConfigSTA(void)
 {
-  // re-enable dhcp
-  WiFi.config(0u, 0u, 0u);
+  // stop listening on config.local, start listening on <throttleName>.local
+  
+  char hostName[NAME_CHARS];
+  
+  for(char * src = throttleName, * dst = hostName; *src != 0;)
+    {
+      if(isalnum(*src))
+      {
+        *dst++ = *src++;
+      }
+      else
+      {
+        src++;
+      }
+      *dst = 0;
+    }
+
+#ifdef DEBUG
+  Serial.println(String("Add MDNS ") + hostName + " on throttle name " + throttleName);
+#endif
+
+  MDNS.removeService(NULL, "http", "tcp");
+  MDNS.setHostname(hostName);
+  MDNS.addService("http", "tcp", 80);
 }
 
 void initWiFiSTA(void)
@@ -78,6 +121,31 @@ void initWiFiSTA(void)
   WiFi.begin(wlan.ssid, wlan.key);
 }
 
+void initMDNS(void)
+{
+  char hostName[NAME_CHARS];
+  
+  for(char * src = throttleName, * dst = hostName; *src != 0;)
+    {
+      if(isalnum(*src))
+      {
+        *dst++ = *src++;
+      }
+      else
+      {
+        src++;
+      }
+      *dst = 0;
+    }
+
+#ifdef DEBUG
+  Serial.println(String("Add MDNS ") + hostName + " on throttle name " + throttleName);
+#endif
+
+  MDNS.begin(hostName);
+  MDNS.addService("http", "tcp", 80);
+}
+
 void initWiFiAP(void)
 {
   // open an AP for configuration if connection failed
@@ -94,7 +162,10 @@ void initWiFiAP(void)
   WiFi.softAP(ssid.c_str());
 
   dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
-  dnsServer.start(53, "*", apIP);
+  dnsServer.start(53, "*", WiFi.softAPIP());
+
+  MDNS.begin("config");
+  MDNS.addService("http", "tcp", 80);
 }
 
 void writeMainPage()
@@ -130,7 +201,9 @@ void writeMainPage()
   resp        += String("<hr>Restart system to enable new WiFi settings<hr>\r\n")
                  + "<a href=restart.html>Restart system to enable new WiFi settings</a>\r\n"
                  + "<hr><hr>Status page<hr>\r\n"
-                 + "<a href=status.html>wiFred status subpage</a>\r\n"
+                 + "<a href=status.html>wiClock status subpage</a>\r\n"
+                 + "<hr><hr>Update firmware<hr>\r\n"
+                 + "<a href=update>Update wiClock firmware</a>\r\n"
                  + "</body></html>";
   server.send(200, "text/html", resp);
 }
@@ -209,6 +282,7 @@ void writeStatusPage()
 
 void restartESP()
 {
+  MDNS.removeService(NULL, "http", "tcp");
   ESP.restart();
 }
 
@@ -219,6 +293,8 @@ void initWiFi(void)
   server.on("/status.html", writeStatusPage);
   server.on("/restart.html", restartESP);
   server.onNotFound(writeMainPage);
+
+  updater.setup(&server);
 
   // start configuration webserver
   server.begin();

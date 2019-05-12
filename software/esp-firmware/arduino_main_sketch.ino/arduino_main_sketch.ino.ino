@@ -30,7 +30,7 @@
 #include "stateMachine.h"
 #include "ui.h"
 
-// #define DEBUG
+#define DEBUG
 
 state wiFredState = STATE_STARTUP;
 uint32_t stateTimeout = UINT32_MAX;
@@ -70,12 +70,12 @@ void loop() {
   }
 #endif
 
-  if(emptyBattery)
+/*  if(emptyBattery)
   {
     WiFi.disconnect();
     WiFi.mode(WIFI_OFF);
     ESP.deepSleep(0);
-  }
+  } */
   
   switch(wiFredState)
   {
@@ -90,6 +90,7 @@ void loop() {
       if(WiFi.status() == WL_CONNECTED)
       {
         setLED(25, 50);
+        initMDNS();
         switchState(STATE_CONNECTED);
       }
       else if(millis() > stateTimeout)
@@ -130,6 +131,12 @@ void loop() {
         shutdownWiFiConfigSTA();
         switchState(STATE_CONNECTED);
       }
+
+      if(WiFi.status() != WL_CONNECTED)
+      {
+        switchState(STATE_STARTUP);
+      }
+
       break;
 
     case STATE_CONFIG_AP:

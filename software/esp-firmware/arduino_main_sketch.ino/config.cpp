@@ -61,7 +61,12 @@ void initConfig(void)
 // initialize to default values
   memcpy(wlan.ssid, "undef", sizeof("undef"));
   memcpy(wlan.key, "undef", sizeof("undef"));
-  memcpy(throttleName, "undef", sizeof("undef"));
+
+  uint8_t mac[6];
+  WiFi.macAddress(mac);
+  String tN = "wiClock-" + String(mac[0], 16) + String(mac[5], 16);
+  memcpy(throttleName, tN.c_str(), tN.length() + 1);
+
   memcpy(clockServer.name, "undef", sizeof("undef"));
   clockServer.port = 12080;
 
