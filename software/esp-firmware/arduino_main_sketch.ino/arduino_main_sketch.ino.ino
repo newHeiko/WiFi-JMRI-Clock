@@ -131,6 +131,12 @@ void loop() {
         shutdownWiFiConfigSTA();
         switchState(STATE_CONNECTED);
       }
+
+      if(WiFi.status() != WL_CONNECTED)
+      {
+        switchState(STATE_STARTUP);
+      }
+
       break;
 
     case STATE_CONFIG_AP:
