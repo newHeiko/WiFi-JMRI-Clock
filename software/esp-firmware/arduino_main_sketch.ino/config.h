@@ -26,29 +26,39 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "wifi.h"
-
-#define SERVER_CHARS 21
-
-#define EEPROM_VALID 5
-
-typedef struct
-{
-  char name[SERVER_CHARS];
-  uint16_t port;
-} serverInfo;
-
 #include "clockHandling.h"
 
-#define NAME_CHARS 21
-extern char throttleName[NAME_CHARS];
+// Filenames and field names on SPIFFS
+#define FN_STARTUP_TIME "startupTime.txt"
+#define FIELD_STARTUP_HOUR "hh"
+#define FIELD_STARTUP_MINUTE "mm"
+#define FIELD_STARTUP_SECOND "ss"
+#define FIELD_STARTUP_RATE "rate"
 
+#define FN_CLOCK_CONFIG "clockConfig.txt"
+#define FIELD_CLOCK_MAXRATE "maxRate"
+#define FIELD_CLOCK_PULSELENGTH "pulseLength"
+#define FIELD_CLOCK_OFFSET "offset"
 
-enum eepromAddresses { ID_CLOCK, ID_LOCOS, NAME, WLAN_SSID = NAME + NAME_CHARS, WLAN_KEY = WLAN_SSID + SSID_CHARS,
-  CLOCK_SERVER = WLAN_KEY + KEY_CHARS, CLOCK_PULSE_LENGTH = CLOCK_SERVER + sizeof(serverInfo), CLOCK_MAX_RATE, CLOCK_OFFSET, CLOCK_STARTUP
-  };
+#define FN_SERVER "server.txt"
+#define FIELD_SERVER_NAME "name"
+#define FIELD_SERVER_PORT "port"
+#define FIELD_SERVER_AUTOMATIC "automatic"
+
+#define FN_NAME "name.txt"
+#define FIELD_NAME_NAME "name"
+
+#define FN_WIFI_STUB "wifi"
+#define FIELD_WIFI_SSID "ssid"
+#define FIELD_WIFI_PSK "key"
 
 /**
- * Read all configuration from EEPROM
+ * A user-given name for this device
+ */
+extern char * throttleName;
+
+/**
+ * Read all configuration from SPIFFS
  */
 void initConfig(void);
 
@@ -59,14 +69,34 @@ void initConfig(void);
 void configHandler(void);
 
 /**
+ * Save clock server settings
+ */
+void saveClockServer();
+
+/**
+ * Save clock startup time and rate
+ */
+void saveClockStartup();
+
+/**
  * Save clock configuration
  */
 void saveClockConfig();
 
 /**
- * Save general throttle configuration
+ * Save general device configuration
  */
 void saveGeneralConfig();
 
-#endif
+/**
+ * Save WiFi configuration
+ */
+void saveWiFiConfig();
 
+/**
+ * Reformat configuration filesystem
+ * Resets everything to factory defaults
+ */
+void deleteAllConfig();
+
+#endif
