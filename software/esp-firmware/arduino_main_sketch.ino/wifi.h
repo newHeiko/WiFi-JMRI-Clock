@@ -48,5 +48,6 @@ void shutdownWiFiConfigSTA(void);
 
 void handleWiFi(void);
 
-#endif
+void scanWifi(void);
 
+#endif
