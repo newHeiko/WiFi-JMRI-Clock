@@ -386,7 +386,7 @@ void resetESP()
                   + "<html><head><title>Reset wiClock to factory defaults</title></head>\r\n"
                   + "<body><h1>Reset wiClock to factory defaults?</h1>\r\n"
                   + "<table border=0>"
-                  + "<tr><td><a href=\"/resetConfig?reallyReset=on\">Yes, really reset the wiClock to factory defaults</a></td></tr>\r\n"
+                  + "<tr><td><a href=\"/resetConfig.html?reallyReset=on\">Yes, really reset the wiClock to factory defaults</a></td></tr>\r\n"
                   + "<tr><td><a href=\"/index.html\">No, return to configuration page</a></td></tr>\r\n"
                   + "</table>\r\n"
                   + "</body></html>";
