@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:wfred_loconet_clock-rescue
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -65,21 +66,21 @@ NoConn ~ 4950 3500
 $Comp
 L VCC #PWR011
 U 1 1 5A11E004
-P 3000 1500
-F 0 "#PWR011" H 3000 1600 30  0001 C CNN
-F 1 "VCC" H 3000 1600 30  0000 C CNN
-F 2 "" H 3000 1500 60  0001 C CNN
-F 3 "" H 3000 1500 60  0001 C CNN
-	1    3000 1500
+P 2800 1500
+F 0 "#PWR011" H 2800 1600 30  0001 C CNN
+F 1 "VCC" H 2800 1600 30  0000 C CNN
+F 2 "" H 2800 1500 60  0001 C CNN
+F 3 "" H 2800 1500 60  0001 C CNN
+	1    2800 1500
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3000 1500 3000 3000
+	2800 1500 2800 3000
 Wire Wire Line
-	3000 3000 3800 3000
+	2800 3000 3800 3000
 Wire Wire Line
-	3800 2500 3000 2500
-Connection ~ 3000 2500
+	3800 2500 2800 2500
+Connection ~ 2800 2500
 $Comp
 L GND #PWR012
 U 1 1 5A11E30D
@@ -178,12 +179,10 @@ $EndComp
 Wire Wire Line
 	6700 2800 5600 2800
 Wire Wire Line
-	5600 2900 6500 2900
-Wire Wire Line
 	6500 2700 6500 2200
 Connection ~ 6500 2700
 Wire Wire Line
-	6700 2200 6700 2800
+	6700 2200 6700 3200
 Wire Wire Line
 	6500 1700 6500 1600
 Wire Wire Line
@@ -267,13 +266,13 @@ Wire Wire Line
 	1200 2800 1800 2800
 Connection ~ 1200 2800
 NoConn ~ 3800 2300
-Text GLabel 5800 2500 2    60   Output ~ 0
+Text GLabel 7700 3200 2    60   Output ~ 0
 STATUS_LED
 Wire Wire Line
-	3600 2700 3800 2700
-Text GLabel 3600 2700 0    60   Output ~ 0
+	3250 2700 3800 2700
+Text GLabel 3250 2700 0    60   Output ~ 0
 CLOCK2
-Text GLabel 3600 2900 0    60   Input ~ 0
+Text GLabel 3350 2900 0    60   Input ~ 0
 KEY_CONF
 $Comp
 L CAPAPOL C203
@@ -305,10 +304,10 @@ F 3 "" H 2600 1500 60  0001 C CNN
 $EndComp
 Wire Wire Line
 	2600 2400 3800 2400
-Text GLabel 3600 2800 0    60   Output ~ 0
+Text GLabel 3250 2800 0    60   Output ~ 0
 CLOCK1
 Wire Wire Line
-	3600 2900 3800 2900
+	3350 2900 3800 2900
 Wire Wire Line
 	5600 2500 5800 2500
 $Comp
@@ -352,13 +351,11 @@ Connection ~ 2600 2400
 Wire Wire Line
 	2600 3300 2600 3700
 Wire Wire Line
-	3800 2800 3600 2800
-Text GLabel 3600 2600 0    60   Input ~ 0
-KEY
-Wire Wire Line
-	3600 2600 3800 2600
-Text GLabel 5800 2600 2    60   Input ~ 0
+	3800 2800 3250 2800
+Text GLabel 3350 2600 0    60   Input ~ 0
 KEY_HOUR
+Wire Wire Line
+	3350 2600 3800 2600
 Text GLabel 7700 2700 2    60   Input ~ 0
 KEY_MINUTE
 Wire Wire Line
@@ -368,4 +365,41 @@ Wire Wire Line
 Connection ~ 6800 2700
 Wire Wire Line
 	5800 2600 5600 2600
+Wire Wire Line
+	6700 3200 7700 3200
+Connection ~ 6700 2800
+Text GLabel 5800 2500 2    60   Output ~ 0
+CLOCK3
+Text GLabel 5800 2600 2    60   Output ~ 0
+CLOCK4
+Wire Wire Line
+	6500 2900 5600 2900
+$Comp
+L R R206
+U 1 1 5D44B97B
+P 3600 1950
+F 0 "R206" V 3680 1950 40  0000 C CNN
+F 1 "10k" V 3607 1951 40  0000 C CNN
+F 2 "Capacitors_SMD:C_0805_HandSoldering" V 3530 1950 30  0001 C CNN
+F 3 "" H 3600 1950 30  0000 C CNN
+F 4 "603-RC0805JR-0710KL" V 3600 1950 60  0001 C CNN "Mouser"
+	1    3600 1950
+	-1   0    0    1   
+$EndComp
+$Comp
+L VCC #PWR019
+U 1 1 5D44BB12
+P 3600 1500
+F 0 "#PWR019" H 3600 1600 30  0001 C CNN
+F 1 "VCC" H 3600 1600 30  0000 C CNN
+F 2 "" H 3600 1500 60  0001 C CNN
+F 3 "" H 3600 1500 60  0001 C CNN
+	1    3600 1500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3600 1500 3600 1700
+Wire Wire Line
+	3600 2200 3600 2600
+Connection ~ 3600 2600
 $EndSCHEMATC

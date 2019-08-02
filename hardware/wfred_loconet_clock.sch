@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:wfred_loconet_clock-rescue
 LIBS:power
 LIBS:device
 LIBS:transistors
