@@ -25,6 +25,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "config.h"
+
 // pins on which the clock outputs are located
 #define CLOCK1_PIN 16
 #define CLOCK2_PIN 14
@@ -44,17 +46,24 @@ typedef struct
   uint8_t rate10;
 } clockInfo;
 
-#include "config.h"
-
 extern clockInfo ourTime;
 extern clockInfo networkTime;
 extern clockInfo startupTime;
 
+typedef struct
+{
+  bool automatic;
+  char * name;
+  uint16_t port;
+} serverInfo;
+
 extern serverInfo clockServer;
+
+extern char * automaticServer;
+extern IPAddress automaticServerIP;
 
 void initClock(void);
 
 void clockHandler(void);
 
 #endif
-

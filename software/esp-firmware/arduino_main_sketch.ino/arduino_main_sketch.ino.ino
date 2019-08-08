@@ -18,7 +18,7 @@
  * This file ties everything together to initialize the hardware and
  * form the main loop.
  * 
- * This project was made for ESP12E/ESP12F with Arduino ESP version 2.5.0
+ * This project was made for ESP12E/ESP12F with Arduino ESP version 2.5.2
  * Board settings: Generic ESP8266 Module, 80MHz, Flash, Disabled, ck, 26MHz,
  * 40MHz, DOUT (compatible), 4M (1M SPIFFS), 2, v1.4 Higher Bandwidth, 
  * Disabled, None, Only Sketch, 115200 on /dev/ttyUSB0
@@ -39,11 +39,11 @@ void setup() {
 // put your setup code here, to run once:
 
   initUI();
+  Serial.begin(115200);
+  Serial.setTimeout(10);
   initConfig();
   initClock();
   
-  Serial.begin(115200);
-  Serial.setTimeout(10);
   #ifdef DEBUG
   Serial.setDebugOutput(true);
   #else
@@ -90,6 +90,7 @@ void loop() {
       if(WiFi.status() == WL_CONNECTED)
       {
         setLED(25, 50);
+        initMDNS();
         switchState(STATE_CONNECTED);
       }
       else if(millis() > stateTimeout)
@@ -100,7 +101,7 @@ void loop() {
       break;
 
     case STATE_CONNECTED:
-      if(getInputState() == true)
+      if(getInputPressed(KEY_CONFIG) == true)
       {
         initWiFiConfigSTA();
         switchState(STATE_CONFIG_STATION_WAITING, 120 * 1000);
@@ -115,7 +116,7 @@ void loop() {
 
     case STATE_CONFIG_STATION_WAITING:
       setLED(100, 100);
-      if(millis() > stateTimeout || getInputState() == false)
+      if(millis() > stateTimeout || getInputPressed(KEY_CONFIG) == true)
       {
         setLED(25, 50);
         shutdownWiFiConfigSTA();
@@ -124,12 +125,18 @@ void loop() {
       break;
 
     case STATE_CONFIG_STATION:
-      if(getInputState() == false)
+      if(getInputPressed(KEY_CONFIG) == true)
       {
         setLED(25, 50);
         shutdownWiFiConfigSTA();
         switchState(STATE_CONNECTED);
       }
+
+      if(WiFi.status() != WL_CONNECTED)
+      {
+        switchState(STATE_STARTUP);
+      }
+
       break;
 
     case STATE_CONFIG_AP:
@@ -151,4 +158,3 @@ void switchState(state newState, uint32_t timeout)
     stateTimeout = millis() + timeout;
   }
 }
-

@@ -1,0 +1,3 @@
+- Firmware version - date + git hash
+- "Set current time" firmware option
+- Multiple (parallel?) clock outputs per device

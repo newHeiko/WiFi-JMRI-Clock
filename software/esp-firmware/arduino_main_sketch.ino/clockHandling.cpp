@@ -20,6 +20,7 @@
 
 #include <string.h>
 #include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
 #include <Ticker.h>
 
 #include "clockHandling.h"
@@ -36,6 +37,8 @@ clockInfo ourTime;
 clockInfo networkTime;
 clockInfo startupTime;
 serverInfo clockServer;
+char * automaticServer;
+IPAddress automaticServerIP;
 
 volatile bool flagGetTime = true;
 volatile bool flagNewTime = false;
@@ -204,16 +207,53 @@ void clockHandler(void)
         client.setNoDelay(true);
         client.setTimeout(10);
         client.print(String("GET /json/time") + " HTTP/1.1\r\n" +
-             "Host: " + clockServer.name + "\r\n" +
+             "Host: " + (clockServer.automatic && automaticServer != nullptr ? automaticServer : clockServer.name) + "\r\n" +
              "Connection: close\r\n" +
              "\r\n"
             );
       }
       else
       {
-        client.connect(clockServer.name, clockServer.port);
+        if(clockServer.automatic && automaticServer != nullptr)
+        {
+#ifdef DEBUG
+          Serial.println("Trying to connect to automatic server...");
+#endif
+          client.connect(automaticServerIP, clockServer.port);
+        }
+        else if(!clockServer.automatic)
+        {
+          client.connect(clockServer.name, clockServer.port);
+        }
       }
     }
+
+    if(clockServer.automatic && automaticServer == nullptr && flagGetTime 
+      && (wiFredState == STATE_CONNECTED || wiFredState == STATE_CONFIG_AP) )
+    {
+#ifdef DEBUG
+      Serial.println("Looking for automatic server");
+      Serial.println("Installing service query");
+#endif
+      uint32_t n = MDNS.queryService("http", "tcp");
+      for(uint32_t i = 0; i < n; i++)
+      {
+#ifdef DEBUG
+        Serial.print(String("Hostname: ") + MDNS.hostname(i) + " IP ");
+        Serial.print(MDNS.IP(i));
+        Serial.println(String(" port ") + MDNS.port(i));
+#endif
+        if(MDNS.port(i) == clockServer.port)
+        {
+          automaticServer = strdup(MDNS.hostname(i).c_str());
+          automaticServerIP = MDNS.IP(i);
+          MDNS.removeQuery();
+          break;          
+        }
+      }
+      flagGetTime = false;
+    }
+    
     if(flagNewTime)
     {
       // reset flag

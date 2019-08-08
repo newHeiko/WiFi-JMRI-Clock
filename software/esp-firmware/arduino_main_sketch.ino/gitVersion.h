@@ -15,39 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  *
- * This file handles connecting and reconnecting to a wireless network as well
- * as providing a webserver for configuration of the device and status readout.
+ * This file is a dummy which will be replaced at compile-time by the
+ * make-git-version script if properly setup. Including it will yield a 
+ * macro called REV with the format dateGithash, i.e. "2019-08-03e2aa239"
  */
-#ifndef _WIFI_H_
-#define _WIFI_H_
 
-#include <vector>
-
-#define SSID_CHARS 21
-#define KEY_CHARS 21
-
-typedef struct
-{
-  char * ssid;
-  char * key;
-} wifiAPEntry;
-
-extern std::vector<wifiAPEntry> apList;
-
-void initWiFi(void);
-
-void initWiFiSTA(void);
-
-void initMDNS(void);
-
-void initWiFiAP(void);
-
-void initWiFiConfigSTA(void);
-
-void shutdownWiFiConfigSTA(void);
-
-void handleWiFi(void);
-
-void scanWifi(void);
-
-#endif
+ #define REV "unknown"
