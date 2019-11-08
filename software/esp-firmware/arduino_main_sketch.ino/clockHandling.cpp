@@ -34,6 +34,9 @@ uint8_t clockMaxRate = 10;
 int8_t clockOffset;
 
 clockInfo ourTime;
+#ifdef CLOCK3_PIN
+clockInfo ourTime2;
+#endif
 clockInfo networkTime;
 clockInfo startupTime;
 serverInfo clockServer;

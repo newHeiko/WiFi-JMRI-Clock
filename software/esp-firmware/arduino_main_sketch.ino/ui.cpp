@@ -66,9 +66,9 @@ bool getInputPressed(keys key)
  */
 void debounceInputCallback(void)
 {
-  static uint8_t counter[4] = {0, 0, 0, 0};
+  static uint8_t counter[3] = {0, 0, 0};
 
-  for(uint8_t index = KEY_CONFIG; index <= KEY; index++)
+  for(uint8_t index = KEY_CONFIG; index <= KEY_MINUTE; index++)
   {
     if(digitalRead(KEY_PIN[index]) == LOW && inputState[index] == false)
     {
@@ -159,7 +159,7 @@ void setLED(uint16_t onTime, uint16_t dutyCycle)
  */
 void initUI(void)
 {
-  for(uint8_t index = KEY_CONFIG; index < KEY; index++)
+  for(uint8_t index = KEY_CONFIG; index <= KEY_MINUTE; index++)
   {
     pinMode(KEY_PIN[index], INPUT_PULLUP);
   }

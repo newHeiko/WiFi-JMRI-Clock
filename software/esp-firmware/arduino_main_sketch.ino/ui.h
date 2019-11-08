@@ -22,10 +22,10 @@
 #ifndef _UI_H_
 #define _UI_H_
 
-#define LED_PIN 5
-const byte KEY_PIN[4] = { 13, 4, 0, 16 };
+#define LED_PIN 2
+const byte KEY_PIN[3] = { 13, 16, 0 };
 
-enum keys { KEY_CONFIG, KEY_HOUR, KEY_MINUTE, KEY };
+enum keys { KEY_CONFIG, KEY_MINUTE, KEY_HOUR };
 
 /**
  * Setup pullup resistor, pin output mode, callback ticker etc. at startup

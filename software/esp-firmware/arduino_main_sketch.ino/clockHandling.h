@@ -31,6 +31,10 @@
 #define CLOCK1_PIN 12
 #define CLOCK2_PIN 14
 
+// second clock output - disabled if commented out
+#define CLOCK3_PIN 5
+#define CLOCK4_PIN 4
+
 // maximum value for which times are considered to be the same
 #define CLOCK_DELTA 10
 
@@ -47,6 +51,9 @@ typedef struct
 } clockInfo;
 
 extern clockInfo ourTime;
+#ifdef CLOCK3_PIN
+extern clockInfo ourTime2;
+#endif
 extern clockInfo networkTime;
 extern clockInfo startupTime;
 

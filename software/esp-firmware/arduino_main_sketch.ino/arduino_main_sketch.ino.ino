@@ -95,6 +95,7 @@ void loop() {
       }
       else if(millis() > stateTimeout)
       {
+        setLED(190, 200);
         initWiFiAP();
         switchState(STATE_CONFIG_AP);
       }
@@ -140,7 +141,6 @@ void loop() {
       break;
 
     case STATE_CONFIG_AP:
-      setLED(190, 200);
     // no way to get out of here except for restart
       break;
   }
