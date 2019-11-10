@@ -33,10 +33,7 @@ uint8_t clockPulseLength = 40;
 uint8_t clockMaxRate = 10;
 int8_t clockOffset;
 
-clockInfo ourTime;
-#ifdef CLOCK3_PIN
-clockInfo ourTime2;
-#endif
+clockInfo ourTime[NUM_CLOCKS];
 clockInfo networkTime;
 clockInfo startupTime;
 serverInfo clockServer;
@@ -46,10 +43,7 @@ IPAddress automaticServerIP;
 volatile bool flagGetTime = true;
 volatile bool flagNewTime = false;
 
-Ticker networkSecond;
-Ticker ourSecond;
 Ticker realSecond;
-Ticker oneShot;
 
 void plusOneSecond(clockInfo * input)
 {
@@ -70,10 +64,10 @@ void plusOneSecond(clockInfo * input)
   }
 }
 
-void resetClockOutputs(void)
+void resetClockOutputs(clockInfo * clockID)
 {
-  digitalWrite(CLOCK1_PIN, HIGH);
-  digitalWrite(CLOCK2_PIN, HIGH);
+  digitalWrite(clockID->pin1, HIGH);
+  digitalWrite(clockID->pin2, HIGH);
 }
 
 void secondTickHandler(void)
@@ -81,24 +75,23 @@ void secondTickHandler(void)
   flagGetTime = true;
 }
 
-void setClockOutputs(void)
+void setClockOutputs(clockInfo * clockID)
 {
-  static uint8_t edgeCounter;
-  edgeCounter++;
-  edgeCounter %= 4;
-  if(edgeCounter == 0)
+  clockID->edgeCounter++;
+  clockID->edgeCounter %= 4;
+  if(clockID->edgeCounter == 0)
   {
-    digitalWrite(CLOCK1_PIN, LOW);
-    oneShot.once_ms(clockPulseLength, resetClockOutputs);
+    digitalWrite(clockID->pin1, LOW);
+    clockID->resetTicker-> once_ms(clockPulseLength, resetClockOutputs, clockID);
   }
-  else if( (edgeCounter == 2 && !lowBattery) || (edgeCounter == 3 && lowBattery) )
+  else if( (clockID->edgeCounter == 2 && !lowBattery) || (clockID->edgeCounter == 3 && lowBattery) )
   {
-    digitalWrite(CLOCK2_PIN, LOW);
-    oneShot.once_ms(clockPulseLength, resetClockOutputs);
+    digitalWrite(clockID->pin2, LOW);
+    clockID->resetTicker->once_ms(clockPulseLength, resetClockOutputs, clockID);
   }
-  if(edgeCounter % 2 == 0)
+  if(clockID->edgeCounter % 2 == 0)
   {
-    plusOneSecond(&ourTime);
+    plusOneSecond(clockID);
     flagNewTime = true;
   }
 }
@@ -111,40 +104,59 @@ void networkSecondHandler(void)
 
 void initClock(void)
 {
-  memcpy(&ourTime, &startupTime, sizeof(clockInfo));
+  for(uint8_t i=0; i<NUM_CLOCKS; i++)
+  {
+    memcpy(&ourTime[i], &startupTime, sizeof(clockInfo));
+    ourTime[i].secondTicker = new Ticker();
+    ourTime[i].resetTicker = new Ticker();
+    ourTime[i].hours %= 12;
+  }
+
+  ourTime[0].pin1 = CLOCK1_PIN;
+  ourTime[0].pin2 = CLOCK2_PIN;
+#ifdef CLOCK3_PIN
+  ourTime[1].pin1 = CLOCK3_PIN;
+  ourTime[1].pin2 = CLOCK4_PIN;
+#endif
+
   memcpy(&networkTime, &startupTime, sizeof(clockInfo));
-
-  ourTime.hours %= 12;
   networkTime.hours %= 12;
+  networkTime.secondTicker = new Ticker();
 
-  pinMode(CLOCK1_PIN, OUTPUT);
-  pinMode(CLOCK2_PIN, OUTPUT);
-  digitalWrite(CLOCK1_PIN, HIGH);
-  digitalWrite(CLOCK2_PIN, HIGH);
+  for(uint8_t i=0; i<NUM_CLOCKS; i++)
+  {
+    pinMode(ourTime[i].pin1, OUTPUT);
+    pinMode(ourTime[i].pin2, OUTPUT);
+    digitalWrite(ourTime[i].pin1, HIGH);
+    digitalWrite(ourTime[i].pin2, HIGH);
+  }
   
   realSecond.attach(1.0, secondTickHandler);
 
-  if(ourTime.rate10 > 10 * clockMaxRate)
+  for(uint8_t i=0; i<NUM_CLOCKS; i++)
   {
-    ourTime.rate10 = 10 * clockMaxRate;
-  }
+    if(ourTime[i].rate10 > 10 * clockMaxRate)
+    {
+      ourTime[i].rate10 = 10 * clockMaxRate;
+    }
 
-  if(ourTime.rate10 != 0)
-  {
-    ourSecond.attach(10.0 / ourTime.rate10 / 2, setClockOutputs);
-  }
-  else
-  {
-    ourSecond.detach();
-  }
+    if(ourTime[i].rate10 != 0)
+    {
+      ourTime[i].secondTicker->attach(10.0 / ourTime[i].rate10 / 2, setClockOutputs, &ourTime[i]);
+    }
+    else
+    {
+      ourTime[i].secondTicker->detach();
+    }
 
-  if(networkTime.rate10 != 0)
-  {
-    networkSecond.attach(10.0 / networkTime.rate10, networkSecondHandler);
-  }
-  else
-  {
-    networkSecond.detach();
+    if(networkTime.rate10 != 0)
+    {
+      networkTime.secondTicker->attach(10.0 / networkTime.rate10, networkSecondHandler);
+    }
+    else
+    {
+      networkTime.secondTicker->detach();
+    }
   }
 }
 
@@ -193,14 +205,17 @@ void clockHandler(void)
               {
                 if(temp.rate10 != 0)
                 {
-                  networkSecond.attach(10.0 / temp.rate10, networkSecondHandler);
+                  networkTime.secondTicker->attach(10.0 / temp.rate10, networkSecondHandler);
                 }
                 else
                 {
-                  networkSecond.detach();
+                  networkTime.secondTicker->detach();
                 }
               }
-              memcpy(&networkTime, &temp, sizeof(networkTime));
+              networkTime.seconds = temp.seconds;
+              networkTime.minutes = temp.minutes;
+              networkTime.hours = temp.hours;
+              networkTime.rate10 = temp.rate10;
               flagNewTime = true;
             }
           }

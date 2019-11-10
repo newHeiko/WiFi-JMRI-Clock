@@ -22,6 +22,7 @@
 #define _CLOCK_HANDLING_H_
 
 #include <ESP8266WiFi.h>
+#include <Ticker.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -34,6 +35,12 @@
 // second clock output - disabled if commented out
 #define CLOCK3_PIN 5
 #define CLOCK4_PIN 4
+
+#ifdef CLOCK3_PIN
+  #define NUM_CLOCKS 2
+#else
+  #define NUM_CLOCKS 1
+#endif
 
 // maximum value for which times are considered to be the same
 #define CLOCK_DELTA 10
@@ -48,12 +55,14 @@ typedef struct
   uint8_t minutes;
   uint8_t seconds;
   uint8_t rate10;
+  Ticker * secondTicker;
+  Ticker * resetTicker;
+  uint8_t pin1;
+  uint8_t pin2;
+  uint8_t edgeCounter;
 } clockInfo;
 
-extern clockInfo ourTime;
-#ifdef CLOCK3_PIN
-extern clockInfo ourTime2;
-#endif
+extern clockInfo ourTime[NUM_CLOCKS];
 extern clockInfo networkTime;
 extern clockInfo startupTime;
 

@@ -323,7 +323,7 @@ void writeMainPage()
                  + "<tr><td>Pulse length for clock (milliseconds):</td><td><input type=\"text\" name=\"clock.pulseLength\" value=\"" + clockPulseLength + "\"></td></tr>"
                  + "<tr><td conspan=2><input type=\"submit\" value=\"Save clock configuration\"></td></tr></table></form>\r\n";
 
-  snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", ourTime.hours, ourTime.minutes, ourTime.seconds);
+  snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", ourTime[0].hours, ourTime[0].minutes, ourTime[0].seconds);
   resp        += String("<hr>wiClock status<hr>\r\n")
                  + "<table border=0>"
                  + "<tr><td>Battery voltage: </td><td>" + batteryVoltage + " mV" + (lowBattery ? " Battery LOW" : "" ) + "</td></tr>\r\n"
@@ -331,7 +331,7 @@ void writeMainPage()
   
   snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", networkTime.hours, networkTime.minutes, networkTime.seconds);
   resp        += String("<tr><td>Network time: </td><td>") + timeString + "</td></tr>\r\n"
-                 + "<tr><td>Clock rate: </td><td>" + ourTime.rate10 / 10.0 + "</td></tr></table>\r\n"
+                 + "<tr><td>Clock rate: </td><td>" + ourTime[0].rate10 / 10.0 + "</td></tr></table>\r\n"
                  + "<hr>wiClock system<hr>\r\n"
                  + "<a href=resetConfig.html>Reset wiClock to factory defaults</a>\r\n"
                  + "<a href=update>Update wiClock firmware</a>\r\n"
