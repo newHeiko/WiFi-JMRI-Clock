@@ -277,66 +277,69 @@ void clockHandler(void)
       // reset flag
       flagNewTime = false;
 
-      // keep old rate in case it is not changed
-      uint8_t oldRate = ourTime.rate10;
-      // calculate network-local time difference and re-adjust local clock rate if required
-      int32_t delta = networkTime.hours * 3600 + networkTime.minutes * 60 + networkTime.seconds 
-                    - (ourTime.hours * 3600 + ourTime.minutes * 60 + ourTime.seconds);
-      // roll over after twelve hours and make sure it's inside [0...12 hours]
-      delta %= (12 * 3600);
-      if(delta < 0)
+      for(uint8_t i=0; i<NUM_CLOCKS; i++)
       {
-        delta += 12 * 3600;
-      }
-
-      // simple cases first
-      // if we are already at same speed and close enough, keep doing it
-      if( (delta < CLOCK_DELTA || delta > 12 * 3600 - CLOCK_DELTA) && networkTime.rate10 == ourTime.rate10)
-      {
-        // do nothing
-      }
-      // if we are into a smaller window, set same rate (if we can run as fast)
-      else if( (delta < CLOCK_DELTA / 2 || delta > 12 * 3600 - CLOCK_DELTA / 2) && networkTime.rate10 <= clockMaxRate * 10)
-      {
-        ourTime.rate10 = networkTime.rate10;
-      }
-      // otherwise check if it will be faster to wait for network time or to play catch-up
-      
-      // network clock not moving, so we need to catch up
-      else if(networkTime.rate10 == 0)
-      {
-        ourTime.rate10 = clockMaxRate * 10;
-      }
-      // network clock faster or same than we can run at all, so stop clock
-      // (if same, will start running again once network clock has caught up)
-      else if(networkTime.rate10 >= clockMaxRate * 10)
-      {
-        ourTime.rate10 = 0;
-      }
-      else
-      {
-        uint8_t maxRateDelta = clockMaxRate * 10 - networkTime.rate10;
-        uint16_t catchupTime = delta / maxRateDelta;
-        uint16_t waitTime = (12 * 3600 - delta) / networkTime.rate10;
-        if(waitTime <= catchupTime)
+        // keep old rate in case it is not changed
+        uint8_t oldRate = ourTime[i].rate10;
+        // calculate network-local time difference and re-adjust local clock rate if required
+        int32_t delta = networkTime.hours * 3600 + networkTime.minutes * 60 + networkTime.seconds 
+                      - (ourTime[i].hours * 3600 + ourTime[i].minutes * 60 + ourTime[i].seconds);
+        // roll over after twelve hours and make sure it's inside [0...12 hours]
+        delta %= (12 * 3600);
+        if(delta < 0)
         {
-          ourTime.rate10 = 0;
+          delta += 12 * 3600;
+        }
+
+        // simple cases first
+        // if we are already at same speed and close enough, keep doing it
+        if( (delta < CLOCK_DELTA || delta > 12 * 3600 - CLOCK_DELTA) && networkTime.rate10 == ourTime[i].rate10)
+        {
+          // do nothing
+        }
+        // if we are into a smaller window, set same rate (if we can run as fast)
+        else if( (delta < CLOCK_DELTA / 2 || delta > 12 * 3600 - CLOCK_DELTA / 2) && networkTime.rate10 <= clockMaxRate * 10)
+        {
+          ourTime[i].rate10 = networkTime.rate10;
+        }
+        // otherwise check if it will be faster to wait for network time or to play catch-up
+        
+        // network clock not moving, so we need to catch up
+        else if(networkTime.rate10 == 0)
+        {
+          ourTime[i].rate10 = clockMaxRate * 10;
+        }
+        // network clock faster or same than we can run at all, so stop clock
+        // (if same, will start running again once network clock has caught up)
+        else if(networkTime.rate10 >= clockMaxRate * 10)
+        {
+          ourTime[i].rate10 = 0;
         }
         else
         {
-          ourTime.rate10 = clockMaxRate * 10;
+          uint8_t maxRateDelta = clockMaxRate * 10 - networkTime.rate10;
+          uint16_t catchupTime = delta / maxRateDelta;
+          uint16_t waitTime = (12 * 3600 - delta) / networkTime.rate10;
+          if(waitTime <= catchupTime)
+          {
+            ourTime[i].rate10 = 0;
+          }
+          else
+          {
+            ourTime[i].rate10 = clockMaxRate * 10;
+          }
         }
-      }
 
-      if(ourTime.rate10 != oldRate)
-      {
-        if(ourTime.rate10 != 0)
+        if(ourTime[i].rate10 != oldRate)
         {
-          ourSecond.attach(10.0 / ourTime.rate10 / 2, setClockOutputs);
-        }
-        else
-        {
-          ourSecond.detach();
+          if(ourTime[i].rate10 != 0)
+          {
+            ourTime[i].secondTicker->attach(10.0 / ourTime[i].rate10 / 2, setClockOutputs, &ourTime[i]);
+          }
+          else
+          {
+            ourTime[i].secondTicker->detach();
+          }
         }
       }
   }
