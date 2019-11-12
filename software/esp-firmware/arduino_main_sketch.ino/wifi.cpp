@@ -277,18 +277,44 @@ void writeMainPage()
     saveClockConfig();
   }
 
+  // check if this is a "set clock time" request
+  if (server.hasArg("clock.time") && server.hasArg("clock.ID"))
+  {
+    uint8_t i = server.arg("clock.ID").toInt();
+    if(i<NUM_CLOCKS)
+    {
+      
+    }
+  }
+
   char timeString[9];
 
   String resp = String("<!DOCTYPE HTML>\r\n")
-                + "<html><head><title>wiClock configuration page</title></head>\r\n"
-                + "<body><h1>wiClock configuration page</h1>\r\n"
-                + "<hr>General configuration<hr>\r\n"
-                + "<form action=\"index.html\" method=\"get\"><table border=0>"
-                + "<tr><td>Throttle name:</td><td><input type=\"text\" name=\"throttleName\" value=\"" + throttleName + "\"></td></tr>"
-                + "<tr><td colspan=2><input type=\"submit\" value=\"Save name\"></td></tr></table></form>\r\n"
-                + "<hr>WiFi configuration<hr>\r\n"
-                + "<table border=0><tr><td>Active WiFi network SSID:</td><td>" + (WiFi.isConnected() ? WiFi.SSID() : "not connected") + "</td><td><a href=scanWifi.html>Scan for networks</a></td></tr>"
-                + "<tr><td colspan=3>Known WiFi networks:</td></tr>";
+                + "<html><head><title>wiClock configuration page</title></head>\r\n";
+
+  resp        += String("<hr>wiClock status<hr>\r\n")
+                 + "<table border=0>";
+
+  for(uint8_t i=0; i<NUM_CLOCKS; i++)
+  {
+    snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", ourTime[i].hours, ourTime[i].minutes, ourTime[i].seconds);
+
+    resp        += String("<form action=\"index.html\" method=\"get\"><tr><td>System time ") + (i+1) + ": </td>"
+                 + "<td><input type=\"text\" name=\"clock.time\" value=\"" + timeString + "\">"
+                 + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\">"
+                 + "<input type=\"submit\" value=\"Set Clock" + (i+1) + "\"></td></tr></form>\r\n"
+                 + "<tr><td>Clock rate " + (i+1) + ": </td><td>" + (ourTime[i].rate10 / 10.0) + "</td></tr>\r\n";
+  }
+  snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", networkTime.hours, networkTime.minutes, networkTime.seconds);
+  resp        += String("<tr><td>Network time: </td><td>") + timeString + "</td></tr>\r\n"
+                 + "<tr><td>Battery voltage: </td><td>" + batteryVoltage + " mV" + (lowBattery ? " Battery LOW" : "" ) + "</td></tr></table>\r\n"
+                 + "<hr>General configuration<hr>\r\n"
+                 + "<form action=\"index.html\" method=\"get\"><table border=0>"
+                 + "<tr><td>Throttle name:</td><td><input type=\"text\" name=\"throttleName\" value=\"" + throttleName + "\"></td></tr>"
+                 + "<tr><td colspan=2><input type=\"submit\" value=\"Save name\"></td></tr></table></form>\r\n"
+                 + "<hr>WiFi configuration<hr>\r\n"
+                 + "<table border=0><tr><td>Active WiFi network SSID:</td><td>" + (WiFi.isConnected() ? WiFi.SSID() : "not connected") + "</td><td><a href=scanWifi.html>Scan for networks</a></td></tr>"
+                 + "<tr><td colspan=3>Known WiFi networks:</td></tr>";
   for(std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
   {
     resp += String("<tr><td>SSID: ") + it->ssid + "</td><td>PSK: " + it->key + "</td>"
@@ -303,39 +329,33 @@ void writeMainPage()
 
   resp        += String("<a href=restart.html>Restart wiClock to enable new WiFi settings</a>\r\n")
                  + " WiFi settings will not be active until restart.\r\n";
-
+                
   snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", startupTime.hours, startupTime.minutes, startupTime.seconds);
 
-  resp        += String("<hr>Clock configuration<hr>")
-                 + "<table border=0><form action=\"index.html\" method=\"get\">"
-                 + "<tr><td>Clock server and port: </td>"
-                 + "<td>http://<input type=\"text\" name=\"clock.serverName\" value=\"" + clockServer.name + "\">:<input type=\"text\" name=\"clock.serverPort\" value=\"" + clockServer.port + "\">/json/time</td></tr>"
-                 + "<tr><td>Find server automatically through Zeroconf/Bonjour?</td><td><input type=\"checkbox\" name=\"clock.automatic\"" + (clockServer.automatic ? " checked" : "") + ">"
-                 + "Using http://" + (clockServer.automatic && automaticServer != nullptr ? automaticServer : clockServer.name) + ":" + clockServer.port + "/json/time</td></tr>"
-                 + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock server settings\"</td></tr></form>"
-                 + "<form action=\"index.html\" method=\"get\">"
-                 + "<tr><td>Startup time (format: H:M:S):</td><td><input type=\"text\" name=\"clock.startUp\" value=\"" + timeString + "\"></td></tr>"
-                 + "<tr><td>Startup clock rate:</td><td><input type=\"text\" name=\"clock.startupRate\" value=\"" + startupTime.rate10 / 10.0 + "\"></td></tr>"
-                 + "<tr><td colspan=2><input type=\"submit\" value=\"Save startup time and rate\"</td></tr></form>"
-                 + "<form action=\"index.html\" method=\"get\">"
-                 + "<tr><td>Clock offset from UTC (hours):</td><td><input type=\"text\" name=\"clock.offset\" value=\"" + clockOffset + "\"></td></tr>"
-                 + "<tr><td>Maximum clock rate:</td><td><input type=\"text\" name=\"clock.maxClockRate\" value=\"" + clockMaxRate + "\"></td></tr>"
-                 + "<tr><td>Pulse length for clock (milliseconds):</td><td><input type=\"text\" name=\"clock.pulseLength\" value=\"" + clockPulseLength + "\"></td></tr>"
-                 + "<tr><td conspan=2><input type=\"submit\" value=\"Save clock configuration\"></td></tr></table></form>\r\n";
+  resp        += String("<body><h1>wiClock configuration page</h1>\r\n")
+                + "<hr>Clock configuration<hr>"
+                + "<table border=0><form action=\"index.html\" method=\"get\">"
+                + "<tr><td>Clock server and port: </td>"
+                + "<td>http://<input type=\"text\" name=\"clock.serverName\" value=\"" + clockServer.name + "\">:<input type=\"text\" name=\"clock.serverPort\" value=\"" + clockServer.port + "\">/json/time</td></tr>"
+                + "<tr><td>Find server automatically through Zeroconf/Bonjour?</td><td><input type=\"checkbox\" name=\"clock.automatic\"" + (clockServer.automatic ? " checked" : "") + ">"
+                + "Using http://" + (clockServer.automatic && automaticServer != nullptr ? automaticServer : clockServer.name) + ":" + clockServer.port + "/json/time</td></tr>"
+                + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock server settings\"</td></tr></form>"
+                + "<form action=\"index.html\" method=\"get\">"
+                + "<tr><td>Startup time (format: H:M:S):</td><td><input type=\"text\" name=\"clock.startUp\" value=\"" + timeString + "\"></td></tr>"
+                + "<tr><td>Startup clock rate:</td><td><input type=\"text\" name=\"clock.startupRate\" value=\"" + startupTime.rate10 / 10.0 + "\"></td></tr>"
+                + "<tr><td colspan=2><input type=\"submit\" value=\"Save startup time and rate\"</td></tr></form>"
+                + "<form action=\"index.html\" method=\"get\">"
+                + "<tr><td>Clock offset from UTC (hours):</td><td><input type=\"text\" name=\"clock.offset\" value=\"" + clockOffset + "\"></td></tr>"
+                + "<tr><td>Maximum clock rate:</td><td><input type=\"text\" name=\"clock.maxClockRate\" value=\"" + clockMaxRate + "\"></td></tr>"
+                + "<tr><td>Pulse length for clock (milliseconds):</td><td><input type=\"text\" name=\"clock.pulseLength\" value=\"" + clockPulseLength + "\"></td></tr>"
+                + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock configuration\"></td></tr></table></form>\r\n"
 
-  snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", ourTime[0].hours, ourTime[0].minutes, ourTime[0].seconds);
-  resp        += String("<hr>wiClock status<hr>\r\n")
-                 + "<table border=0>"
-                 + "<tr><td>Battery voltage: </td><td>" + batteryVoltage + " mV" + (lowBattery ? " Battery LOW" : "" ) + "</td></tr>\r\n"
-                 + "<tr><td>System time: </td><td>" + timeString + "</td></tr>\r\n";
-  
-  snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", networkTime.hours, networkTime.minutes, networkTime.seconds);
-  resp        += String("<tr><td>Network time: </td><td>") + timeString + "</td></tr>\r\n"
-                 + "<tr><td>Clock rate: </td><td>" + ourTime[0].rate10 / 10.0 + "</td></tr></table>\r\n"
-                 + "<hr>wiClock system<hr>\r\n"
-                 + "<a href=resetConfig.html>Reset wiClock to factory defaults</a>\r\n"
-                 + "<a href=update>Update wiClock firmware</a>\r\n"
-                 + "</body></html>";
+                + "<hr>wiClock system<hr>\r\n"
+                + "<a href=resetConfig.html>Reset wiClock to factory defaults</a>\r\n"
+                + "<a href=update>Update wiClock firmware</a>\r\n"
+                + "</body></html>";
+
+
   server.send(200, "text/html", resp);
 }
 
