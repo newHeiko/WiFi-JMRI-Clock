@@ -271,7 +271,32 @@ void clockHandler(void)
       }
       flagGetTime = false;
     }
+
+    if(getInputPressed(KEY_MINUTE))
+    {
+      for(uint8_t i=0; i<NUM_CLOCKS; i++)
+      {
+        ourTime[i].minutes--;
+        while(ourTime[i].minutes >= 60)
+        {
+          ourTime[i].minutes += 60;
+          ourTime[i].hours--;
+          ourTime[i].hours %= 12;    
+        }
+      }
+      flagNewTime = true;
+    }
     
+    if(getInputPressed(KEY_HOUR))
+    {
+      for(uint8_t i=0; i<NUM_CLOCKS; i++)
+      {
+        ourTime[i].hours--;
+        ourTime[i].hours %= 12;    
+      }
+      flagNewTime = true;
+    }
+
     if(flagNewTime)
     {
       // reset flag
