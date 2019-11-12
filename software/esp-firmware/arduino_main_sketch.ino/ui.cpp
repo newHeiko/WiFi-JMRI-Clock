@@ -28,8 +28,8 @@ Ticker ledOnTime;
 
 Ticker debounceInput;
 
-bool inputState[4] = { false, false, false, false };
-bool inputPressed[4] = { false, false, false, false };
+bool inputState[3] = { false, false, false };
+bool inputPressed[3] = { false, false, false };
 
 uint16_t m_onTime;
 uint16_t m_dutyCycle;
@@ -68,7 +68,7 @@ void debounceInputCallback(void)
 {
   static uint8_t counter[3] = {0, 0, 0};
 
-  for(uint8_t index = KEY_CONFIG; index <= KEY_MINUTE; index++)
+  for(uint8_t index = KEY_CONFIG; index <= KEY_HOUR; index++)
   {
     if(digitalRead(KEY_PIN[index]) == LOW && inputState[index] == false)
     {
@@ -159,7 +159,7 @@ void setLED(uint16_t onTime, uint16_t dutyCycle)
  */
 void initUI(void)
 {
-  for(uint8_t index = KEY_CONFIG; index <= KEY_MINUTE; index++)
+  for(uint8_t index = KEY_CONFIG; index <= KEY_HOUR; index++)
   {
     pinMode(KEY_PIN[index], INPUT_PULLUP);
   }
