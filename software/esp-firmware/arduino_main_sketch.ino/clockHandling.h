@@ -66,6 +66,8 @@ extern clockInfo ourTime[NUM_CLOCKS];
 extern clockInfo networkTime;
 extern clockInfo startupTime;
 
+extern volatile bool flagNewTime;
+
 typedef struct
 {
   bool automatic;

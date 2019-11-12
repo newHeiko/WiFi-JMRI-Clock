@@ -283,7 +283,20 @@ void writeMainPage()
     uint8_t i = server.arg("clock.ID").toInt();
     if(i<NUM_CLOCKS)
     {
-      
+      String newTime = server.arg("clock.time");
+      alignas(4) unsigned int hours, minutes, seconds;
+
+      if (sscanf(newTime.c_str(), "%u:%u:%u", &hours, &minutes, &seconds) == 3)
+      {
+        if (hours < 24 && minutes < 60 && seconds < 60)
+        {
+          ourTime[i].hours = (uint8_t) hours % 12;
+          ourTime[i].minutes = (uint8_t) minutes;
+          ourTime[i].seconds = (uint8_t) seconds;
+
+          flagNewTime = true;
+        }
+      }
     }
   }
 
