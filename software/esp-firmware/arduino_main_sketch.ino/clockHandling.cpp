@@ -281,7 +281,10 @@ void clockHandler(void)
         {
           ourTime[i].minutes += 60;
           ourTime[i].hours--;
-          ourTime[i].hours %= 12;    
+          while(ourTime[i].hours >= 12)
+          {
+            ourTime[i].hours += 12;    
+          }
         }
       }
       flagNewTime = true;
@@ -292,7 +295,10 @@ void clockHandler(void)
       for(uint8_t i=0; i<NUM_CLOCKS; i++)
       {
         ourTime[i].hours--;
-        ourTime[i].hours %= 12;    
+        while(ourTime[i].hours >= 12)
+        {
+          ourTime[i].hours += 12;    
+        }
       }
       flagNewTime = true;
     }
