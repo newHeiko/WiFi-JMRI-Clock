@@ -303,7 +303,8 @@ void writeMainPage()
   char timeString[9];
 
   String resp = String("<!DOCTYPE HTML>\r\n")
-                + "<html><head><title>wiClock configuration page</title></head>\r\n";
+                + "<html><head><title>wiClock configuration page</title></head>\r\n"
+                + "<body><h1>wiClock configuration page</h1>\r\n";
 
   resp        += String("<hr>wiClock status<hr>\r\n")
                  + "<table border=0>";
@@ -345,8 +346,7 @@ void writeMainPage()
                 
   snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", startupTime.hours, startupTime.minutes, startupTime.seconds);
 
-  resp        += String("<body><h1>wiClock configuration page</h1>\r\n")
-                + "<hr>Clock configuration<hr>"
+  resp        += String("<hr>Clock configuration<hr>")
                 + "<table border=0><form action=\"index.html\" method=\"get\">"
                 + "<tr><td>Clock server and port: </td>"
                 + "<td>http://<input type=\"text\" name=\"clock.serverName\" value=\"" + clockServer.name + "\">:<input type=\"text\" name=\"clock.serverPort\" value=\"" + clockServer.port + "\">/json/time</td></tr>"
