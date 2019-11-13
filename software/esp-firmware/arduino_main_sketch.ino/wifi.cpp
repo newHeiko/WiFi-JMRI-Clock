@@ -33,6 +33,7 @@
 #include "lowbat.h"
 #include "Ticker.h"
 #include "stateMachine.h"
+#include "gitVersion.h"
 
 // #define DEBUG
 
@@ -366,6 +367,7 @@ void writeMainPage()
                 + "<hr>wiClock system<hr>\r\n"
                 + "<a href=resetConfig.html>Reset wiClock to factory defaults</a>\r\n"
                 + "<a href=update>Update wiClock firmware</a>\r\n"
+                + "Firmware revision: " + REV + " \r\n"
                 + "</body></html>";
 
 
