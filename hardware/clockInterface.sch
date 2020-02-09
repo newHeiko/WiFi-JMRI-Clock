@@ -1,38 +1,5 @@
-EESchema Schematic File Version 2
-LIBS:wfred_loconet_clock-rescue
-LIBS:power
-LIBS:device
-LIBS:transistors
-LIBS:conn
-LIBS:linear
-LIBS:regul
-LIBS:74xx
-LIBS:cmos4000
-LIBS:adc-dac
-LIBS:memory
-LIBS:xilinx
-LIBS:microcontrollers
-LIBS:dsp
-LIBS:microchip
-LIBS:analog_switches
-LIBS:motorola
-LIBS:texas
-LIBS:intel
-LIBS:audio
-LIBS:interface
-LIBS:digital-audio
-LIBS:philips
-LIBS:display
-LIBS:cypress
-LIBS:siliconi
-LIBS:opto
-LIBS:atmel
-LIBS:contrib
-LIBS:valves
-LIBS:my_devices
-LIBS:ESP8266
-LIBS:wfred_loconet_clock-cache
-EELAYER 25 0
+EESchema Schematic File Version 4
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -51,7 +18,7 @@ CLOCK1
 Text GLabel 3900 3500 0    60   Input ~ 0
 CLOCK2
 $Comp
-L R R301
+L wfred_loconet_clock-rescue:R R301
 U 1 1 5A1291DD
 P 4450 2700
 F 0 "R301" V 4530 2700 40  0000 C CNN
@@ -63,7 +30,7 @@ F 4 "603-RC0805JR-07220RL" V 4450 2700 60  0001 C CNN "Mouser"
 	0    1    1    0   
 $EndComp
 $Comp
-L R R302
+L wfred_loconet_clock-rescue:R R302
 U 1 1 5A12924F
 P 4450 3500
 F 0 "R302" V 4530 3500 40  0000 C CNN
@@ -75,7 +42,7 @@ F 4 "603-RC0805JR-07220RL" V 4450 3500 60  0001 C CNN "Mouser"
 	0    1    1    0   
 $EndComp
 $Comp
-L LED D301
+L wfred_loconet_clock-rescue:LED D301
 U 1 1 5A12928F
 P 5000 3100
 F 0 "D301" H 5000 3200 50  0000 C CNN
@@ -87,7 +54,7 @@ F 4 "LED 3MM RT" H 5000 3100 60  0001 C CNN "Reichelt"
 	0    1    1    0   
 $EndComp
 $Comp
-L LED D302
+L wfred_loconet_clock-rescue:LED D302
 U 1 1 5A129325
 P 5300 3100
 F 0 "D302" H 5300 3200 50  0000 C CNN
@@ -99,7 +66,7 @@ F 4 "LED 3MM RT" H 5300 3100 60  0001 C CNN "Reichelt"
 	0    -1   -1   0   
 $EndComp
 $Comp
-L CONN_2 P301
+L wfred_loconet_clock-rescue:CONN_2 P301
 U 1 1 5A12938D
 P 6150 3100
 F 0 "P301" V 6100 3100 40  0000 C CNN
@@ -113,7 +80,7 @@ $EndComp
 Wire Wire Line
 	3900 2700 4200 2700
 Wire Wire Line
-	4700 2700 5600 2700
+	4700 2700 5000 2700
 Wire Wire Line
 	5600 2700 5600 3000
 Wire Wire Line
@@ -127,7 +94,7 @@ Connection ~ 5000 2700
 Wire Wire Line
 	3900 3500 4200 3500
 Wire Wire Line
-	4700 3500 5600 3500
+	4700 3500 5000 3500
 Wire Wire Line
 	5600 3500 5600 3200
 Wire Wire Line
@@ -139,7 +106,7 @@ Wire Wire Line
 	5000 3300 5000 3500
 Connection ~ 5000 3500
 $Comp
-L GND #PWR020
+L wfred_loconet_clock-rescue:GND #PWR020
 U 1 1 5A15360C
 P 5400 6900
 F 0 "#PWR020" H 5400 6900 30  0001 C CNN
@@ -156,7 +123,7 @@ KEY_CONF
 Wire Wire Line
 	4400 4500 3900 4500
 $Comp
-L SW_PUSH SW301
+L wfred_loconet_clock-rescue:SW_PUSH SW301
 U 1 1 5C82A486
 P 4700 4500
 F 0 "SW301" H 4850 4610 50  0000 C CNN
@@ -168,7 +135,7 @@ F 4 "611-PTS645SM13SMTR92" H 4700 4500 60  0001 C CNN "Mouser"
 	-1   0    0    -1  
 $EndComp
 $Comp
-L LED D303
+L wfred_loconet_clock-rescue:LED D303
 U 1 1 5C82A97E
 P 6900 2700
 F 0 "D303" H 6900 2800 50  0000 C CNN
@@ -180,7 +147,7 @@ F 4 "LED 3MM RT" H 6900 2700 60  0001 C CNN "Reichelt"
 	0    1    1    0   
 $EndComp
 $Comp
-L R R303
+L wfred_loconet_clock-rescue:R R303
 U 1 1 5C82AAA2
 P 6900 3450
 F 0 "R303" V 6980 3450 40  0000 C CNN
@@ -192,7 +159,7 @@ F 4 "603-RC0805JR-07220RL" V 6900 3450 60  0001 C CNN "Mouser"
 	-1   0    0    1   
 $EndComp
 $Comp
-L VCC #PWR021
+L wfred_loconet_clock-rescue:VCC #PWR021
 U 1 1 5C82ABFF
 P 6900 2200
 F 0 "#PWR021" H 6900 2300 30  0001 C CNN
@@ -219,7 +186,7 @@ KEY_HOUR
 Wire Wire Line
 	4400 4900 3900 4900
 $Comp
-L SW_PUSH SW302
+L wfred_loconet_clock-rescue:SW_PUSH SW302
 U 1 1 5CA9E853
 P 4700 4900
 F 0 "SW302" H 4850 5010 50  0000 C CNN
@@ -237,7 +204,7 @@ KEY_MINUTE
 Wire Wire Line
 	4400 5300 3900 5300
 $Comp
-L SW_PUSH SW303
+L wfred_loconet_clock-rescue:SW_PUSH SW303
 U 1 1 5CA9E95A
 P 4700 5300
 F 0 "SW303" H 4850 5410 50  0000 C CNN
@@ -255,7 +222,7 @@ CLOCK3
 Text GLabel 3900 2500 0    60   Input ~ 0
 CLOCK4
 $Comp
-L R R304
+L wfred_loconet_clock-rescue:R R304
 U 1 1 5D44BDE6
 P 4450 1700
 F 0 "R304" V 4530 1700 40  0000 C CNN
@@ -267,7 +234,7 @@ F 4 "603-RC0805JR-07220RL" V 4450 1700 60  0001 C CNN "Mouser"
 	0    1    1    0   
 $EndComp
 $Comp
-L R R305
+L wfred_loconet_clock-rescue:R R305
 U 1 1 5D44BDED
 P 4450 2500
 F 0 "R305" V 4530 2500 40  0000 C CNN
@@ -279,7 +246,7 @@ F 4 "603-RC0805JR-07220RL" V 4450 2500 60  0001 C CNN "Mouser"
 	0    1    1    0   
 $EndComp
 $Comp
-L LED D304
+L wfred_loconet_clock-rescue:LED D304
 U 1 1 5D44BDF4
 P 5000 2100
 F 0 "D304" H 5000 2200 50  0000 C CNN
@@ -291,7 +258,7 @@ F 4 "LED 3MM RT" H 5000 2100 60  0001 C CNN "Reichelt"
 	0    1    1    0   
 $EndComp
 $Comp
-L LED D305
+L wfred_loconet_clock-rescue:LED D305
 U 1 1 5D44BDFB
 P 5300 2100
 F 0 "D305" H 5300 2200 50  0000 C CNN
@@ -303,7 +270,7 @@ F 4 "LED 3MM RT" H 5300 2100 60  0001 C CNN "Reichelt"
 	0    -1   -1   0   
 $EndComp
 $Comp
-L CONN_2 P302
+L wfred_loconet_clock-rescue:CONN_2 P302
 U 1 1 5D44BE02
 P 6150 2100
 F 0 "P302" V 6100 2100 40  0000 C CNN
@@ -317,7 +284,7 @@ $EndComp
 Wire Wire Line
 	3900 1700 4200 1700
 Wire Wire Line
-	4700 1700 5600 1700
+	4700 1700 5000 1700
 Wire Wire Line
 	5600 1700 5600 2000
 Wire Wire Line
@@ -331,7 +298,7 @@ Connection ~ 5000 1700
 Wire Wire Line
 	3900 2500 4200 2500
 Wire Wire Line
-	4700 2500 5600 2500
+	4700 2500 5000 2500
 Wire Wire Line
 	5600 2500 5600 2200
 Wire Wire Line
@@ -343,5 +310,25 @@ Wire Wire Line
 	5000 2300 5000 2500
 Connection ~ 5000 2500
 Wire Wire Line
-	5400 4500 5400 6900
+	5400 4500 5400 4900
+Wire Wire Line
+	5300 2700 5600 2700
+Wire Wire Line
+	5000 2700 5300 2700
+Wire Wire Line
+	5300 3500 5600 3500
+Wire Wire Line
+	5000 3500 5300 3500
+Wire Wire Line
+	5400 4900 5400 5300
+Wire Wire Line
+	5400 5300 5400 6900
+Wire Wire Line
+	5300 1700 5600 1700
+Wire Wire Line
+	5000 1700 5300 1700
+Wire Wire Line
+	5300 2500 5600 2500
+Wire Wire Line
+	5000 2500 5300 2500
 $EndSCHEMATC
