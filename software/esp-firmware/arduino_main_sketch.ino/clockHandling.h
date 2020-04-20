@@ -43,10 +43,8 @@
 #endif
 
 // maximum value for which times are considered to be the same
-#define CLOCK_DELTA 10
+#define CLOCK_DELTA 2
 
-extern uint8_t clockPulseLength;
-extern uint8_t clockMaxRate;
 extern int8_t clockOffset;
 
 typedef struct
@@ -54,17 +52,26 @@ typedef struct
   uint8_t hours;
   uint8_t minutes;
   uint8_t seconds;
-  uint8_t rate10;
+  uint16_t rate10;
   Ticker * secondTicker;
+} clockTime;
+
+typedef struct
+{
   Ticker * resetTicker;
   uint8_t pin1;
   uint8_t pin2;
-  uint8_t edgeCounter;
+  uint8_t tickCounter;
+  bool nextEdgeHigh;
+  bool minuteMode;
+  uint16_t clockPulseLength;
+  uint16_t clockMaxTickFrequency;
 } clockInfo;
 
-extern clockInfo ourTime[NUM_CLOCKS];
-extern clockInfo networkTime;
-extern clockInfo startupTime;
+extern clockTime ourTime[NUM_CLOCKS];
+extern clockInfo clockHW[NUM_CLOCKS];
+extern clockTime networkTime;
+extern clockTime startupTime[NUM_CLOCKS];
 
 extern volatile bool flagNewTime;
 

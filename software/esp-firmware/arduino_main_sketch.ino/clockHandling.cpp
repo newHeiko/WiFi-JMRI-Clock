@@ -29,13 +29,13 @@
 #include "stateMachine.h"
 #include "ui.h"
 
-uint8_t clockPulseLength = 40;
-uint8_t clockMaxRate = 10;
+clockTime ourTime[NUM_CLOCKS];
+clockInfo clockHW[NUM_CLOCKS];
+clockTime networkTime;
+clockTime startupTime[NUM_CLOCKS];
+
 int8_t clockOffset;
 
-clockInfo ourTime[NUM_CLOCKS];
-clockInfo networkTime;
-clockInfo startupTime;
 serverInfo clockServer;
 char * automaticServer;
 IPAddress automaticServerIP;
@@ -45,7 +45,7 @@ volatile bool flagNewTime = false;
 
 Ticker realSecond;
 
-void plusOneSecond(clockInfo * input)
+void plusOneSecond(clockTime * input)
 {
   input->seconds++;
   if(input->seconds >= 60)
@@ -62,6 +62,7 @@ void plusOneSecond(clockInfo * input)
   {
     input->hours = 0;
   }
+  flagNewTime = true;
 }
 
 void resetClockOutputs(clockInfo * clockID)
@@ -77,87 +78,118 @@ void secondTickHandler(void)
 
 void setClockOutputs(clockInfo * clockID)
 {
-  clockID->edgeCounter++;
-  clockID->edgeCounter %= 4;
-  if(clockID->edgeCounter == 0)
+  if(clockID->nextEdgeHigh)
   {
     digitalWrite(clockID->pin1, LOW);
-    clockID->resetTicker-> once_ms(clockPulseLength, resetClockOutputs, clockID);
   }
-  else if( (clockID->edgeCounter == 2 && !lowBattery) || (clockID->edgeCounter == 3 && lowBattery) )
+  else
   {
     digitalWrite(clockID->pin2, LOW);
-    clockID->resetTicker->once_ms(clockPulseLength, resetClockOutputs, clockID);
   }
-  if(clockID->edgeCounter % 2 == 0)
+  clockID->nextEdgeHigh = !clockID->nextEdgeHigh;
+  clockID->resetTicker-> once_ms(clockID->clockPulseLength, resetClockOutputs, clockID);
+}
+
+void everyHardwareHalfSecond(uint8_t clockID)
+{
+  clockHW[clockID].tickCounter++;
+  if(clockHW[clockID].minuteMode)
   {
-    plusOneSecond(clockID);
-    flagNewTime = true;
+    clockHW[clockID].tickCounter %= 2;
+    if(clockHW[clockID].tickCounter == 0)
+    {
+      plusOneSecond(&ourTime[clockID]);
+      if(ourTime[clockID].seconds == 0)
+      {
+        setClockOutputs(&clockHW[clockID]);
+      }
+    }
+  }
+  else
+  {
+    clockHW[clockID].tickCounter %= 4;
+    if(  (clockHW[clockID].tickCounter == 0)
+      || (clockHW[clockID].tickCounter == 2 && !lowBattery)
+      || (clockHW[clockID].tickCounter == 3 && lowBattery) )
+    {
+      plusOneSecond(&ourTime[clockID]);
+      setClockOutputs(&clockHW[clockID]);
+    }
   }
 }
 
-void networkSecondHandler(void)
+void setClockRate(uint8_t i)
+{ 
+  if(ourTime[i].rate10 > 10 * clockHW[i].clockMaxTickFrequency && !clockHW[i].minuteMode)
+  {
+    ourTime[i].rate10 = 10 * clockHW[i].clockMaxTickFrequency;
+  }
+
+  if(ourTime[i].rate10 > 10 * 60 * clockHW[i].clockMaxTickFrequency && clockHW[i].minuteMode)
+  {
+    ourTime[i].rate10 = 10 * 60 * clockHW[i].clockMaxTickFrequency;
+  }
+
+  if(ourTime[i].rate10 != 0)
+  {
+    ourTime[i].secondTicker->attach(10.0 / ourTime[i].rate10 / 2, everyHardwareHalfSecond, i);
+  }
+  else
+  {
+    ourTime[i].secondTicker->detach();
+  }
+}
+
+void setClockRate(void)
 {
-  plusOneSecond(&networkTime);
-  flagNewTime = true;
+  for(uint8_t i=0; i<NUM_CLOCKS; i++)
+  {
+    setClockRate(i);
+  }
 }
 
 void initClock(void)
 {
   for(uint8_t i=0; i<NUM_CLOCKS; i++)
   {
-    memcpy(&ourTime[i], &startupTime, sizeof(clockInfo));
+    memcpy(&ourTime[i], &startupTime, sizeof(clockTime));
     ourTime[i].secondTicker = new Ticker();
-    ourTime[i].resetTicker = new Ticker();
     ourTime[i].hours %= 12;
+
+    clockHW[i].resetTicker = new Ticker();
   }
 
-  ourTime[0].pin1 = CLOCK1_PIN;
-  ourTime[0].pin2 = CLOCK2_PIN;
+  clockHW[0].pin1 = CLOCK1_PIN;
+  clockHW[0].pin2 = CLOCK2_PIN;
 #ifdef CLOCK3_PIN
-  ourTime[1].pin1 = CLOCK3_PIN;
-  ourTime[1].pin2 = CLOCK4_PIN;
+  clockHW[1].pin1 = CLOCK3_PIN;
+  clockHW[1].pin2 = CLOCK4_PIN;
 #endif
 
-  memcpy(&networkTime, &startupTime, sizeof(clockInfo));
+  for(uint8_t i=0; i<NUM_CLOCKS; i++)
+  {
+    pinMode(clockHW[i].pin1, OUTPUT);
+    pinMode(clockHW[i].pin2, OUTPUT);
+    digitalWrite(clockHW[i].pin1, HIGH);
+    digitalWrite(clockHW[i].pin2, HIGH);
+  }
+  
+  setClockRate();
+
+  memcpy(&networkTime, &startupTime, sizeof(clockTime));
   networkTime.hours %= 12;
   networkTime.secondTicker = new Ticker();
 
-  for(uint8_t i=0; i<NUM_CLOCKS; i++)
+  if(networkTime.rate10 != 0)
   {
-    pinMode(ourTime[i].pin1, OUTPUT);
-    pinMode(ourTime[i].pin2, OUTPUT);
-    digitalWrite(ourTime[i].pin1, HIGH);
-    digitalWrite(ourTime[i].pin2, HIGH);
+    networkTime.secondTicker->attach(10.0 / networkTime.rate10, plusOneSecond, &networkTime);
   }
-  
+  else
+  {
+    networkTime.secondTicker->detach();
+  }
+
   realSecond.attach(1.0, secondTickHandler);
-
-  for(uint8_t i=0; i<NUM_CLOCKS; i++)
-  {
-    if(ourTime[i].rate10 > 10 * clockMaxRate)
-    {
-      ourTime[i].rate10 = 10 * clockMaxRate;
-    }
-
-    if(ourTime[i].rate10 != 0)
-    {
-      ourTime[i].secondTicker->attach(10.0 / ourTime[i].rate10 / 2, setClockOutputs, &ourTime[i]);
-    }
-    else
-    {
-      ourTime[i].secondTicker->detach();
-    }
-
-    if(networkTime.rate10 != 0)
-    {
-      networkTime.secondTicker->attach(10.0 / networkTime.rate10, networkSecondHandler);
-    }
-    else
-    {
-      networkTime.secondTicker->detach();
-    }
-  }
 }
 
 void clockHandler(void)
@@ -179,7 +211,7 @@ void clockHandler(void)
 
             client.flush();
 
-            clockInfo temp;
+            clockTime temp;
             size_t pos;
             pos = line.indexOf("T");
             temp.hours = line.substring(pos + 1).toInt();
@@ -205,7 +237,7 @@ void clockHandler(void)
               {
                 if(temp.rate10 != 0)
                 {
-                  networkTime.secondTicker->attach(10.0 / temp.rate10, networkSecondHandler);
+                  networkTime.secondTicker->attach(10.0 / temp.rate10, plusOneSecond, &networkTime);
                 }
                 else
                 {
@@ -311,7 +343,7 @@ void clockHandler(void)
       for(uint8_t i=0; i<NUM_CLOCKS; i++)
       {
         // keep old rate in case it is not changed
-        uint8_t oldRate = ourTime[i].rate10;
+        uint16_t oldRate = ourTime[i].rate10;
         // calculate network-local time difference and re-adjust local clock rate if required
         int32_t delta = networkTime.hours * 3600 + networkTime.minutes * 60 + networkTime.seconds 
                       - (ourTime[i].hours * 3600 + ourTime[i].minutes * 60 + ourTime[i].seconds);
@@ -322,14 +354,23 @@ void clockHandler(void)
           delta += 12 * 3600;
         }
 
+        uint32_t maxDelta = CLOCK_DELTA;
+        uint16_t clockMaxRate = clockHW[i].clockMaxTickFrequency;
+
+        // in minute mode, use one second window only and adapt maximum clock rate accordingly
+        if(clockHW[i].minuteMode)
+        {
+          clockMaxRate *= 60;
+        }
+
         // simple cases first
         // if we are already at same speed and close enough, keep doing it
-        if( (delta < CLOCK_DELTA || delta > 12 * 3600 - CLOCK_DELTA) && networkTime.rate10 == ourTime[i].rate10)
+        if( (delta < maxDelta || delta > 12 * 3600 - maxDelta) && networkTime.rate10 == ourTime[i].rate10)
         {
           // do nothing
         }
         // if we are into a smaller window, set same rate (if we can run as fast)
-        else if( (delta < CLOCK_DELTA / 2 || delta > 12 * 3600 - CLOCK_DELTA / 2) && networkTime.rate10 <= clockMaxRate * 10)
+        else if( (delta < maxDelta || delta > 12 * 3600 - maxDelta) && networkTime.rate10 <= clockMaxRate * 10)
         {
           ourTime[i].rate10 = networkTime.rate10;
         }
@@ -348,12 +389,16 @@ void clockHandler(void)
         }
         else
         {
-          uint8_t maxRateDelta = clockMaxRate * 10 - networkTime.rate10;
+          uint16_t maxRateDelta = clockMaxRate * 10 - networkTime.rate10;
           uint16_t catchupTime = delta / maxRateDelta;
           uint16_t waitTime = (12 * 3600 - delta) / networkTime.rate10;
           if(waitTime <= catchupTime)
           {
             ourTime[i].rate10 = 0;
+          }
+          else if(5 * delta + networkTime.rate10 < clockMaxRate * 10)
+          {
+            ourTime[i].rate10 = networkTime.rate10 + 5 * delta;
           }
           else
           {
@@ -363,14 +408,7 @@ void clockHandler(void)
 
         if(ourTime[i].rate10 != oldRate)
         {
-          if(ourTime[i].rate10 != 0)
-          {
-            ourTime[i].secondTicker->attach(10.0 / ourTime[i].rate10 / 2, setClockOutputs, &ourTime[i]);
-          }
-          else
-          {
-            ourTime[i].secondTicker->detach();
-          }
+          setClockRate(i);
         }
       }
   }

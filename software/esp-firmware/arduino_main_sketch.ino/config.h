@@ -39,6 +39,7 @@
 #define FIELD_CLOCK_MAXRATE "maxRate"
 #define FIELD_CLOCK_PULSELENGTH "pulseLength"
 #define FIELD_CLOCK_OFFSET "offset"
+#define FIELD_CLOCK_MINUTEMODE "minutemode"
 
 #define FN_SERVER "server.txt"
 #define FIELD_SERVER_NAME "name"
@@ -75,13 +76,17 @@ void saveClockServer();
 
 /**
  * Save clock startup time and rate
+ * 
+ * @param clockID The ID of the clock that shall be saved (0-based)
  */
-void saveClockStartup();
+void saveClockStartup(uint8_t clockID);
 
 /**
  * Save clock configuration
+ * 
+ * @param clockID The ID of the clock that shall be saved (0-based)
  */
-void saveClockConfig();
+void saveClockConfig(uint8_t clockID);
 
 /**
  * Save general device configuration

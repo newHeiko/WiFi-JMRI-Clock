@@ -1,6 +1,6 @@
 /**
  * This file is part of the wiFred wireless model railroading clock project
- * Copyright (C) 2018  Heiko Rosemann
+ * Copyright (C) 2018-2020 Heiko Rosemann
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
