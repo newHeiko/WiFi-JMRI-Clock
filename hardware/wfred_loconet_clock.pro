@@ -1,6 +1,6 @@
-update=Tue 21 Nov 2017 11:57:03 PM CET
+update=Sat 30 Jan 2021 07:31:10 PM CET
 version=1
-last_client=eeschema
+last_client=kicad
 [general]
 version=1
 RootSch=
@@ -29,36 +29,4 @@ version=1
 NetIExt=net
 [eeschema]
 version=1
-LibDir=../../kicad_extra_libs
-[eeschema/libraries]
-LibName1=power
-LibName2=device
-LibName3=transistors
-LibName4=conn
-LibName5=linear
-LibName6=regul
-LibName7=74xx
-LibName8=cmos4000
-LibName9=adc-dac
-LibName10=memory
-LibName11=xilinx
-LibName12=microcontrollers
-LibName13=dsp
-LibName14=microchip
-LibName15=analog_switches
-LibName16=motorola
-LibName17=texas
-LibName18=intel
-LibName19=audio
-LibName20=interface
-LibName21=digital-audio
-LibName22=philips
-LibName23=display
-LibName24=cypress
-LibName25=siliconi
-LibName26=opto
-LibName27=atmel
-LibName28=contrib
-LibName29=valves
-LibName30=/home/heiko/elektronik/kicad_extra_libs/my_devices
-LibName31=ESP8266
+LibDir=

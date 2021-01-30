@@ -1,37 +1,5 @@
-EESchema Schematic File Version 2
-LIBS:power
-LIBS:device
-LIBS:transistors
-LIBS:conn
-LIBS:linear
-LIBS:regul
-LIBS:74xx
-LIBS:cmos4000
-LIBS:adc-dac
-LIBS:memory
-LIBS:xilinx
-LIBS:microcontrollers
-LIBS:dsp
-LIBS:microchip
-LIBS:analog_switches
-LIBS:motorola
-LIBS:texas
-LIBS:intel
-LIBS:audio
-LIBS:interface
-LIBS:digital-audio
-LIBS:philips
-LIBS:display
-LIBS:cypress
-LIBS:siliconi
-LIBS:opto
-LIBS:atmel
-LIBS:contrib
-LIBS:valves
-LIBS:my_devices
-LIBS:ESP8266
-LIBS:wfred_loconet_clock-cache
-EELAYER 25 0
+EESchema Schematic File Version 4
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -50,7 +18,7 @@ CLOCK1
 Text GLabel 3900 3500 0    60   Input ~ 0
 CLOCK2
 $Comp
-L R R501
+L wfred_loconet_clock-rescue:R R501
 U 1 1 5A1291DD
 P 4450 2700
 F 0 "R501" V 4530 2700 40  0000 C CNN
@@ -62,7 +30,7 @@ F 4 "603-RC0805JR-07220RL" V 4450 2700 60  0001 C CNN "Mouser"
 	0    1    1    0   
 $EndComp
 $Comp
-L R R502
+L wfred_loconet_clock-rescue:R R502
 U 1 1 5A12924F
 P 4450 3500
 F 0 "R502" V 4530 3500 40  0000 C CNN
@@ -74,7 +42,7 @@ F 4 "603-RC0805JR-07220RL" V 4450 3500 60  0001 C CNN "Mouser"
 	0    1    1    0   
 $EndComp
 $Comp
-L LED D501
+L wfred_loconet_clock-rescue:LED D501
 U 1 1 5A12928F
 P 5000 3100
 F 0 "D501" H 5000 3200 50  0000 C CNN
@@ -86,7 +54,7 @@ F 4 "LED 3MM RT" H 5000 3100 60  0001 C CNN "Reichelt"
 	0    1    1    0   
 $EndComp
 $Comp
-L LED D502
+L wfred_loconet_clock-rescue:LED D502
 U 1 1 5A129325
 P 5300 3100
 F 0 "D502" H 5300 3200 50  0000 C CNN
@@ -98,7 +66,7 @@ F 4 "LED 3MM RT" H 5300 3100 60  0001 C CNN "Reichelt"
 	0    -1   -1   0   
 $EndComp
 $Comp
-L CONN_2 P501
+L wfred_loconet_clock-rescue:CONN_2 P501
 U 1 1 5A12938D
 P 6150 3100
 F 0 "P501" V 6100 3100 40  0000 C CNN
@@ -112,7 +80,7 @@ $EndComp
 Wire Wire Line
 	3900 2700 4200 2700
 Wire Wire Line
-	4700 2700 5600 2700
+	4700 2700 5000 2700
 Wire Wire Line
 	5600 2700 5600 3000
 Wire Wire Line
@@ -126,7 +94,7 @@ Connection ~ 5000 2700
 Wire Wire Line
 	3900 3500 4200 3500
 Wire Wire Line
-	4700 3500 5600 3500
+	4700 3500 5000 3500
 Wire Wire Line
 	5600 3500 5600 3200
 Wire Wire Line
@@ -138,7 +106,7 @@ Wire Wire Line
 	5000 3300 5000 3500
 Connection ~ 5000 3500
 $Comp
-L SWITCH_INV SW501
+L wfred_loconet_clock-rescue:SWITCH_INV SW501
 U 1 1 5A15342E
 P 4500 4100
 F 0 "SW501" H 4300 4250 50  0000 C CNN
@@ -150,7 +118,7 @@ F 4 "611-OS102011MS2QN1" H 4500 4100 60  0001 C CNN "Mouser"
 	1    0    0    -1  
 $EndComp
 $Comp
-L SWITCH_INV SW502
+L wfred_loconet_clock-rescue:SWITCH_INV SW502
 U 1 1 5A15348B
 P 4500 4600
 F 0 "SW502" H 4300 4750 50  0000 C CNN
@@ -162,7 +130,7 @@ F 4 "611-OS102011MS2QN1" H 4500 4600 60  0001 C CNN "Mouser"
 	1    0    0    -1  
 $EndComp
 $Comp
-L SWITCH_INV SW503
+L wfred_loconet_clock-rescue:SWITCH_INV SW503
 U 1 1 5A153526
 P 4500 5100
 F 0 "SW503" H 4300 5250 50  0000 C CNN
@@ -174,7 +142,7 @@ F 4 "611-OS102011MS2QN1" H 4500 5100 60  0001 C CNN "Mouser"
 	1    0    0    -1  
 $EndComp
 $Comp
-L SWITCH_INV SW504
+L wfred_loconet_clock-rescue:SWITCH_INV SW504
 U 1 1 5A1535A1
 P 4500 5600
 F 0 "SW504" H 4300 5750 50  0000 C CNN
@@ -186,7 +154,7 @@ F 4 "611-OS102011MS2QN1" H 4500 5600 60  0001 C CNN "Mouser"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR045
+L wfred_loconet_clock-rescue:GND #PWR045
 U 1 1 5A15360C
 P 3800 6100
 F 0 "#PWR045" H 3800 6100 30  0001 C CNN
@@ -197,7 +165,7 @@ F 3 "" H 3800 6100 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR046
+L wfred_loconet_clock-rescue:GND #PWR046
 U 1 1 5A15363B
 P 5200 6100
 F 0 "#PWR046" H 5200 6100 30  0001 C CNN
@@ -208,7 +176,7 @@ F 3 "" H 5200 6100 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5200 6100 5200 4000
+	5200 6100 5200 5500
 Wire Wire Line
 	5200 4000 5000 4000
 Wire Wire Line
@@ -221,7 +189,7 @@ Wire Wire Line
 	5000 5500 5200 5500
 Connection ~ 5200 5500
 Wire Wire Line
-	3800 4100 3800 6100
+	3800 4100 3800 4600
 Wire Wire Line
 	3800 5600 4000 5600
 Wire Wire Line
@@ -249,4 +217,24 @@ Wire Wire Line
 	5400 5200 5000 5200
 Wire Wire Line
 	5000 5700 5350 5700
+Wire Wire Line
+	5300 2700 5600 2700
+Wire Wire Line
+	5000 2700 5300 2700
+Wire Wire Line
+	5300 3500 5600 3500
+Wire Wire Line
+	5000 3500 5300 3500
+Wire Wire Line
+	5200 4500 5200 4000
+Wire Wire Line
+	5200 5000 5200 4500
+Wire Wire Line
+	5200 5500 5200 5000
+Wire Wire Line
+	3800 5600 3800 6100
+Wire Wire Line
+	3800 5100 3800 5600
+Wire Wire Line
+	3800 4600 3800 5100
 $EndSCHEMATC

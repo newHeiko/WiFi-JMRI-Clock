@@ -1,168 +1,11 @@
 EESchema-LIBRARY Version 2.4
 #encoding utf-8
 #
-# my_devices_BAR43
+# ATMEGA328P-A
 #
-DEF my_devices_BAR43 D 0 40 N N 1 F N
-F0 "D" 0 100 40 H V C CNN
-F1 "my_devices_BAR43" 0 -100 40 H V C CNN
-F2 "TO_SOT_Packages_SMD:SOT-23_Handsoldering" 0 0 60 H I C CNN
-F3 "" 0 0 60 H V C CNN
-$FPLIST
- D?
- S*
-$ENDFPLIST
-DRAW
-P 3 0 1 0 -50 50 50 0 -50 -50 F
-P 6 0 1 8 75 25 75 50 50 50 50 -50 25 -50 25 -25 N
-X A 1 -200 0 150 R 40 40 1 1 P
-X K 3 200 0 150 L 40 40 1 1 P
-ENDDRAW
-ENDDEF
-#
-# my_devices_BATT_HOLDER
-#
-DEF my_devices_BATT_HOLDER B 0 40 Y Y 1 F N
-F0 "B" 0 100 60 H V C CNN
-F1 "my_devices_BATT_HOLDER" 0 0 60 H V C CNN
-F2 "" 0 0 60 H I C CNN
-F3 "" 0 0 60 H I C CNN
-DRAW
-C -750 450 50 0 1 0 N
-T 0 -650 -250 60 0 0 0 + Normal 0 C C
-T 0 700 250 60 0 0 0 + Normal 0 C C
-T 0 -650 250 60 0 0 0 - Normal 0 C C
-T 0 700 -250 60 0 0 0 - Normal 0 C C
-S -1000 500 1000 -500 0 1 0 N
-S -900 -100 900 -400 0 1 0 N
-S -900 400 900 100 0 1 0 N
-X MINUS MI1 1200 -300 200 L 50 50 1 1 w
-X MINUS MI2 -1200 300 200 R 50 50 1 1 w
-X PLUS PL1 -1200 -300 200 R 50 50 1 1 w
-X PLUS PL2 1200 300 200 L 50 50 1 1 w
-ENDDRAW
-ENDDEF
-#
-# my_devices_L6920D
-#
-DEF my_devices_L6920D U 0 40 Y Y 1 F N
-F0 "U" 0 0 60 H V C CNN
-F1 "my_devices_L6920D" 0 -100 60 H V C CNN
-F2 "" 0 0 60 H I C CNN
-F3 "" 0 0 60 H I C CNN
-DRAW
-S -500 -400 500 400 0 1 0 N
-X F.B. 1 0 -600 200 U 50 50 1 1 I
-X LBI 2 -700 300 200 R 50 50 1 1 I
-X LBO 3 700 0 200 L 50 50 1 1 O
-X VREF 4 -700 0 200 R 50 50 1 1 I
-X SHDN 5 700 -300 200 L 50 50 1 1 I
-X GND 6 -700 -300 200 R 50 50 1 1 W
-X VBATT 7 0 600 200 D 50 50 1 1 B
-X VOUT 8 700 300 200 L 50 50 1 1 w
-ENDDRAW
-ENDDEF
-#
-# my_devices_TC1240
-#
-DEF my_devices_TC1240 U 0 40 Y Y 1 F N
-F0 "U" 0 0 60 H V C CNN
-F1 "my_devices_TC1240" 0 -100 60 H V C CNN
-F2 "" 0 0 60 H I C CNN
-F3 "" 0 0 60 H I C CNN
-DRAW
-S -500 -400 500 400 0 1 0 N
-X VIN 1 -700 300 200 R 50 50 1 1 I
-X GND 2 0 -600 200 U 50 50 1 1 W
-X C- 3 -700 -300 200 R 50 50 1 1 O
-X SHDN 4 700 -300 200 L 50 50 1 1 I
-X VOUT 5 700 300 200 L 50 50 1 1 w
-X C+ 6 -700 0 200 R 50 50 1 1 I
-ENDDRAW
-ENDDEF
-#
-# my_devices_myCRYSTAL
-#
-DEF my_devices_myCRYSTAL X 0 40 N N 1 F N
-F0 "X" 0 150 60 H V C CNN
-F1 "my_devices_myCRYSTAL" 0 -150 60 H V C CNN
-F2 "" 0 0 60 H V C CNN
-F3 "" 0 0 60 H V C CNN
-DRAW
-T 0 0 -250 60 0 0 0 GND Normal 0 C C
-P 2 0 1 16 -100 100 -100 -100 N
-P 2 0 1 16 100 100 100 -100 N
-P 5 0 1 12 -50 50 50 50 50 -50 -50 -50 -50 50 f
-X 1 1 -300 0 200 R 40 40 1 1 P
-X 2 2 -300 -200 200 R 40 40 1 1 P
-X 3 3 300 0 200 L 40 40 1 1 P
-X 4 4 300 -200 200 L 40 40 1 1 P
-ENDDRAW
-ENDDEF
-#
-# power_+5V
-#
-DEF power_+5V #PWR 0 0 Y Y 1 F P
-F0 "#PWR" 0 -150 50 H I C CNN
-F1 "power_+5V" 0 140 50 H V C CNN
-F2 "" 0 0 50 H I C CNN
-F3 "" 0 0 50 H I C CNN
-DRAW
-P 2 0 1 0 -30 50 0 100 N
-P 2 0 1 0 0 0 0 100 N
-P 2 0 1 0 0 100 30 50 N
-X +5V 1 0 0 0 U 50 50 1 1 W N
-ENDDRAW
-ENDDEF
-#
-# power_+BATT
-#
-DEF power_+BATT #PWR 0 0 Y Y 1 F P
-F0 "#PWR" 0 -150 50 H I C CNN
-F1 "power_+BATT" 0 140 50 H V C CNN
-F2 "" 0 0 50 H I C CNN
-F3 "" 0 0 50 H I C CNN
-DRAW
-P 2 0 1 0 -30 50 0 100 N
-P 2 0 1 0 0 0 0 100 N
-P 2 0 1 0 0 100 30 50 N
-X +BATT 1 0 0 0 U 50 50 1 1 W N
-ENDDRAW
-ENDDEF
-#
-# power_PWR_FLAG
-#
-DEF power_PWR_FLAG #FLG 0 0 N N 1 F P
-F0 "#FLG" 0 75 50 H I C CNN
-F1 "power_PWR_FLAG" 0 150 50 H V C CNN
-F2 "" 0 0 50 H I C CNN
-F3 "" 0 0 50 H I C CNN
-DRAW
-P 6 0 1 0 0 0 0 50 -40 75 0 100 40 75 0 50 N
-X pwr 1 0 0 0 U 50 50 0 0 w
-ENDDRAW
-ENDDEF
-#
-# power_VCC
-#
-DEF power_VCC #PWR 0 0 Y Y 1 F P
-F0 "#PWR" 0 -150 50 H I C CNN
-F1 "power_VCC" 0 150 50 H V C CNN
-F2 "" 0 0 50 H I C CNN
-F3 "" 0 0 50 H I C CNN
-DRAW
-P 2 0 1 0 -30 50 0 100 N
-P 2 0 1 0 0 0 0 100 N
-P 2 0 1 0 0 100 30 50 N
-X VCC 1 0 0 0 U 50 50 1 1 W N
-ENDDRAW
-ENDDEF
-#
-# wfred_loconet_clock-rescue_ATMEGA328P-A
-#
-DEF wfred_loconet_clock-rescue_ATMEGA328P-A IC 0 40 Y Y 1 F N
+DEF ATMEGA328P-A IC 0 40 Y Y 1 F N
 F0 "IC" -750 1250 40 H V L BNN
-F1 "wfred_loconet_clock-rescue_ATMEGA328P-A" 400 -1400 40 H V L BNN
+F1 "ATMEGA328P-A" 400 -1400 40 H V L BNN
 F2 "TQFP32" 0 0 30 H V C CIN
 F3 "" 0 0 60 H I C CNN
 DRAW
@@ -202,11 +45,11 @@ X (PCINT21/OC0B/T1)PD5 9 1000 -1000 150 L 40 40 1 1 B
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_BC817-40
+# BC817-40
 #
-DEF wfred_loconet_clock-rescue_BC817-40 Q 0 0 Y Y 1 F N
+DEF BC817-40 Q 0 0 Y Y 1 F N
 F0 "Q" 0 -149 40 H V R CNN
-F1 "wfred_loconet_clock-rescue_BC817-40" 0 150 40 H V R CNN
+F1 "BC817-40" 0 150 40 H V R CNN
 F2 "SOT-23" -200 102 29 H V C CNN
 F3 "" 0 0 60 H V C CNN
 $FPLIST
@@ -224,11 +67,11 @@ X C 3 100 200 100 D 40 40 1 1 P
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_C
+# C
 #
-DEF wfred_loconet_clock-rescue_C C 0 10 N Y 1 F N
+DEF C C 0 10 N Y 1 F N
 F0 "C" 0 100 40 H V L CNN
-F1 "wfred_loconet_clock-rescue_C" 6 -85 40 H V L CNN
+F1 "C" 6 -85 40 H V L CNN
 F2 "" 38 -150 30 H V C CNN
 F3 "" 0 0 60 H V C CNN
 $FPLIST
@@ -244,11 +87,11 @@ X ~ 2 0 -200 170 U 40 40 1 1 P
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_CONN_2
+# CONN_2
 #
-DEF wfred_loconet_clock-rescue_CONN_2 P 0 40 Y N 1 F N
+DEF CONN_2 P 0 40 Y N 1 F N
 F0 "P" -50 0 40 V V C CNN
-F1 "wfred_loconet_clock-rescue_CONN_2" 50 0 40 V V C CNN
+F1 "CONN_2" 50 0 40 V V C CNN
 F2 "" 0 0 60 H I C CNN
 F3 "" 0 0 60 H I C CNN
 DRAW
@@ -258,11 +101,11 @@ X PM 2 -350 -100 250 R 60 60 1 1 P I
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_CONN_3
+# CONN_3
 #
-DEF wfred_loconet_clock-rescue_CONN_3 K 0 40 Y N 1 F N
+DEF CONN_3 K 0 40 Y N 1 F N
 F0 "K" -50 0 50 V V C CNN
-F1 "wfred_loconet_clock-rescue_CONN_3" 50 0 40 V V C CNN
+F1 "CONN_3" 50 0 40 V V C CNN
 F2 "" 0 0 60 H I C CNN
 F3 "" 0 0 60 H I C CNN
 DRAW
@@ -273,11 +116,11 @@ X P3 3 -350 -100 250 R 60 60 1 1 P I
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_CONN_3X2
+# CONN_3X2
 #
-DEF wfred_loconet_clock-rescue_CONN_3X2 P 0 40 Y N 1 F N
+DEF CONN_3X2 P 0 40 Y N 1 F N
 F0 "P" 0 250 50 H V C CNN
-F1 "wfred_loconet_clock-rescue_CONN_3X2" 0 50 40 V V C CNN
+F1 "CONN_3X2" 0 50 40 V V C CNN
 F2 "" 0 0 60 H I C CNN
 F3 "" 0 0 60 H I C CNN
 DRAW
@@ -291,11 +134,11 @@ X 6 6 400 -50 300 L 60 60 1 1 P I
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_ESP-12E-ESP8266
+# ESP-12E-ESP8266
 #
-DEF wfred_loconet_clock-rescue_ESP-12E-ESP8266 U 0 40 Y Y 1 F N
+DEF ESP-12E-ESP8266 U 0 40 Y Y 1 F N
 F0 "U" 0 -100 50 H V C CNN
-F1 "wfred_loconet_clock-rescue_ESP-12E-ESP8266" 0 100 50 H V C CNN
+F1 "ESP-12E-ESP8266" 0 100 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -329,11 +172,11 @@ X GND 9 900 -400 300 L 50 50 1 1 W
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_GND
+# GND
 #
-DEF wfred_loconet_clock-rescue_GND #PWR 0 0 Y Y 1 F P
+DEF GND #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 0 30 H I C CNN
-F1 "wfred_loconet_clock-rescue_GND" 0 -70 30 H I C CNN
+F1 "GND" 0 -70 30 H I C CNN
 F2 "" 0 0 60 H I C CNN
 F3 "" 0 0 60 H I C CNN
 DRAW
@@ -342,11 +185,11 @@ X GND 1 0 0 0 U 30 30 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_INDUCTOR
+# INDUCTOR
 #
-DEF wfred_loconet_clock-rescue_INDUCTOR L 0 40 N N 1 F N
+DEF INDUCTOR L 0 40 N N 1 F N
 F0 "L" -50 0 40 V V C CNN
-F1 "wfred_loconet_clock-rescue_INDUCTOR" 100 0 40 V V C CNN
+F1 "INDUCTOR" 100 0 40 V V C CNN
 F2 "" 0 0 60 H V C CNN
 F3 "" 0 0 60 H V C CNN
 DRAW
@@ -359,11 +202,11 @@ X 2 2 0 -300 100 U 70 70 1 1 P
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_LED
+# LED
 #
-DEF wfred_loconet_clock-rescue_LED D 0 40 Y N 1 F N
+DEF LED D 0 40 Y N 1 F N
 F0 "D" 0 100 50 H V C CNN
-F1 "wfred_loconet_clock-rescue_LED" 0 -100 50 H V C CNN
+F1 "LED" 0 -100 50 H V C CNN
 F2 "" 0 0 60 H V C CNN
 F3 "" 0 0 60 H V C CNN
 $FPLIST
@@ -385,11 +228,11 @@ X K 2 200 0 150 L 40 40 1 1 P
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_R
+# R
 #
-DEF wfred_loconet_clock-rescue_R R 0 0 N Y 1 F N
+DEF R R 0 0 N Y 1 F N
 F0 "R" 80 0 40 V V C CNN
-F1 "wfred_loconet_clock-rescue_R" 7 1 40 V V C CNN
+F1 "R" 7 1 40 V V C CNN
 F2 "" -70 0 30 V V C CNN
 F3 "" 0 0 30 H V C CNN
 $FPLIST
@@ -406,11 +249,11 @@ X ~ 2 0 -250 100 U 60 60 1 1 P
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_RJ12
+# RJ12
 #
-DEF wfred_loconet_clock-rescue_RJ12 J 0 40 Y Y 1 F N
+DEF RJ12 J 0 40 Y Y 1 F N
 F0 "J" 200 500 60 H V C CNN
-F1 "wfred_loconet_clock-rescue_RJ12" -150 500 60 H V C CNN
+F1 "RJ12" -150 500 60 H V C CNN
 F2 "" 0 0 60 H I C CNN
 F3 "" 0 0 60 H I C CNN
 DRAW
@@ -433,11 +276,11 @@ X SHIELD_2 8 500 300 150 L 50 30 1 1 P
 ENDDRAW
 ENDDEF
 #
-# wfred_loconet_clock-rescue_SWITCH_INV
+# SWITCH_INV
 #
-DEF wfred_loconet_clock-rescue_SWITCH_INV SW 0 0 N Y 1 F N
+DEF SWITCH_INV SW 0 0 N Y 1 F N
 F0 "SW" -200 150 50 H V C CNN
-F1 "wfred_loconet_clock-rescue_SWITCH_INV" -150 -150 50 H V C CNN
+F1 "SWITCH_INV" -150 -150 50 H V C CNN
 F2 "" 0 0 60 H V C CNN
 F3 "" 0 0 60 H V C CNN
 DRAW

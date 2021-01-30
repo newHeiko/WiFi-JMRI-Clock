@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name wfred_loconet_clock-rescue)(type Legacy)(uri /home/heiko/notebookShare/elektronik/WiFi-JMRI-Clock/hardware/wfred_loconet_clock-rescue.lib)(options "")(descr ""))
+)

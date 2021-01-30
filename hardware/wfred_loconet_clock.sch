@@ -1,37 +1,5 @@
-EESchema Schematic File Version 2
-LIBS:power
-LIBS:device
-LIBS:transistors
-LIBS:conn
-LIBS:linear
-LIBS:regul
-LIBS:74xx
-LIBS:cmos4000
-LIBS:adc-dac
-LIBS:memory
-LIBS:xilinx
-LIBS:microcontrollers
-LIBS:dsp
-LIBS:microchip
-LIBS:analog_switches
-LIBS:motorola
-LIBS:texas
-LIBS:intel
-LIBS:audio
-LIBS:interface
-LIBS:digital-audio
-LIBS:philips
-LIBS:display
-LIBS:cypress
-LIBS:siliconi
-LIBS:opto
-LIBS:atmel
-LIBS:contrib
-LIBS:valves
-LIBS:my_devices
-LIBS:ESP8266
-LIBS:wfred_loconet_clock-cache
-EELAYER 25 0
+EESchema Schematic File Version 4
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -46,16 +14,16 @@ Comment3 "Power supply"
 Comment4 "Master sheet for subsheets"
 $EndDescr
 Wire Wire Line
-	2450 2450 2450 2700
+	2450 2450 2450 2600
 Wire Wire Line
-	900  2600 2450 2600
+	900  2600 2150 2600
 Wire Wire Line
-	2150 2400 2150 2700
+	2150 2400 2150 2600
 Connection ~ 2150 2600
 Wire Wire Line
 	1500 2800 1850 2800
 Wire Wire Line
-	1850 2450 1850 3300
+	1850 2450 1850 2800
 Wire Wire Line
 	2150 3100 2150 3300
 Wire Wire Line
@@ -75,9 +43,9 @@ Wire Wire Line
 Wire Wire Line
 	3300 3100 3300 3300
 Wire Wire Line
-	5200 2000 5200 2800
+	5200 2000 5200 2200
 Wire Wire Line
-	5000 2200 6600 2200
+	5000 2200 5200 2200
 Wire Wire Line
 	5200 2800 5000 2800
 Connection ~ 5200 2200
@@ -94,7 +62,7 @@ Wire Wire Line
 	5500 2200 5500 3100
 Connection ~ 5500 2200
 $Comp
-L C C101
+L wfred_loconet_clock-rescue:C C101
 U 1 1 5920B38E
 P 2150 2900
 F 0 "C101" H 2150 3000 40  0000 L CNN
@@ -106,7 +74,7 @@ F 4 "X5R-G0805 22/25" H 2150 2900 60  0001 C CNN "Reichelt"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR01
+L wfred_loconet_clock-rescue:GND #PWR01
 U 1 1 5920B390
 P 2150 3300
 F 0 "#PWR01" H 2150 3300 30  0001 C CNN
@@ -117,7 +85,7 @@ F 3 "" H 2150 3300 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR02
+L wfred_loconet_clock-rescue:GND #PWR02
 U 1 1 5920B391
 P 1850 3300
 F 0 "#PWR02" H 1850 3300 30  0001 C CNN
@@ -128,7 +96,7 @@ F 3 "" H 1850 3300 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR03
+L wfred_loconet_clock-rescue:GND #PWR03
 U 1 1 5920B392
 P 2450 3300
 F 0 "#PWR03" H 2450 3300 30  0001 C CNN
@@ -139,7 +107,7 @@ F 3 "" H 2450 3300 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +BATT #PWR04
+L power:+BATT #PWR04
 U 1 1 5920B394
 P 2150 2400
 F 0 "#PWR04" H 2150 2350 20  0001 C CNN
@@ -150,7 +118,7 @@ F 3 "" H 2150 2400 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L INDUCTOR L101
+L wfred_loconet_clock-rescue:INDUCTOR L101
 U 1 1 5920B395
 P 4300 1400
 F 0 "L101" V 4250 1400 40  0000 C CNN
@@ -162,7 +130,7 @@ F 4 "L-242418FPS 22µ" V 4300 1400 60  0001 C CNN "Reichelt"
 	1    0    0    -1  
 $EndComp
 $Comp
-L +BATT #PWR05
+L power:+BATT #PWR05
 U 1 1 5920B396
 P 4300 900
 F 0 "#PWR05" H 4300 850 20  0001 C CNN
@@ -174,7 +142,7 @@ F 3 "" H 4300 900 60  0001 C CNN
 $EndComp
 NoConn ~ 3600 2200
 $Comp
-L C C103
+L wfred_loconet_clock-rescue:C C103
 U 1 1 5920B397
 P 3300 2900
 F 0 "C103" H 3300 3000 40  0000 L CNN
@@ -186,7 +154,7 @@ F 4 "X7R-G0805 100N" H 3300 2900 60  0001 C CNN "Reichelt"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR06
+L wfred_loconet_clock-rescue:GND #PWR06
 U 1 1 5920B398
 P 3300 3300
 F 0 "#PWR06" H 3300 3300 30  0001 C CNN
@@ -197,7 +165,7 @@ F 3 "" H 3300 3300 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR07
+L wfred_loconet_clock-rescue:GND #PWR07
 U 1 1 5920B399
 P 3500 3300
 F 0 "#PWR07" H 3500 3300 30  0001 C CNN
@@ -209,7 +177,7 @@ F 3 "" H 3500 3300 60  0001 C CNN
 $EndComp
 NoConn ~ 5000 2500
 $Comp
-L VCC #PWR08
+L power:VCC #PWR08
 U 1 1 5920B39A
 P 5200 2000
 F 0 "#PWR08" H 5200 2100 30  0001 C CNN
@@ -220,7 +188,7 @@ F 3 "" H 5200 2000 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR09
+L wfred_loconet_clock-rescue:GND #PWR09
 U 1 1 5920B39D
 P 6300 3300
 F 0 "#PWR09" H 6300 3300 30  0001 C CNN
@@ -231,7 +199,7 @@ F 3 "" H 6300 3300 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR010
+L wfred_loconet_clock-rescue:GND #PWR010
 U 1 1 5920B39E
 P 6600 3300
 F 0 "#PWR010" H 6600 3300 30  0001 C CNN
@@ -254,7 +222,7 @@ F0 "Loconet-Interface" 60
 F1 "loconet-interface.sch" 60
 $EndSheet
 $Comp
-L C C102
+L wfred_loconet_clock-rescue:C C102
 U 1 1 59210DD0
 P 2450 2900
 F 0 "C102" H 2450 3000 40  0000 L CNN
@@ -266,7 +234,7 @@ F 4 "X5R-G0805 22/25" H 2450 2900 60  0001 C CNN "Reichelt"
 	1    0    0    -1  
 $EndComp
 $Comp
-L C C104
+L wfred_loconet_clock-rescue:C C104
 U 1 1 59210E13
 P 6300 2600
 F 0 "C104" H 6300 2700 40  0000 L CNN
@@ -278,7 +246,7 @@ F 4 "X5R-G0805 22/25" H 6300 2600 60  0001 C CNN "Reichelt"
 	1    0    0    -1  
 $EndComp
 $Comp
-L C C105
+L wfred_loconet_clock-rescue:C C105
 U 1 1 59210E8B
 P 6600 2600
 F 0 "C105" H 6600 2700 40  0000 L CNN
@@ -290,7 +258,7 @@ F 4 "X5R-G0805 22/25" H 6600 2600 60  0001 C CNN "Reichelt"
 	1    0    0    -1  
 $EndComp
 $Comp
-L PWR_FLAG #FLG011
+L power:PWR_FLAG #FLG011
 U 1 1 59214833
 P 2450 2450
 F 0 "#FLG011" H 2450 2545 30  0001 C CNN
@@ -302,7 +270,7 @@ F 3 "" H 2450 2450 60  0001 C CNN
 $EndComp
 Connection ~ 2450 2600
 $Comp
-L PWR_FLAG #FLG012
+L power:PWR_FLAG #FLG012
 U 1 1 59214BB2
 P 1850 2450
 F 0 "#FLG012" H 1850 2545 30  0001 C CNN
@@ -314,7 +282,7 @@ F 3 "" H 1850 2450 60  0001 C CNN
 $EndComp
 Connection ~ 1850 2800
 $Comp
-L L6920D U101
+L my_devices:L6920D U101
 U 1 1 5920B393
 P 4300 2500
 F 0 "U101" H 4300 2500 60  0000 C CNN
@@ -347,7 +315,7 @@ Wire Wire Line
 Wire Wire Line
 	1500 3700 1500 2800
 $Comp
-L BATT_HOLDER B101
+L my_devices:BATT_HOLDER B101
 U 1 1 5A14A6C1
 P 1200 4900
 F 0 "B101" H 1200 5000 60  0000 C CNN
@@ -358,4 +326,20 @@ F 4 "KEYSTONE 1013" H 1200 4900 60  0001 C CNN "Reichelt"
 	1    1200 4900
 	0    1    1    0   
 $EndComp
+Wire Wire Line
+	2150 2600 2450 2600
+Wire Wire Line
+	2150 2600 2150 2700
+Wire Wire Line
+	5200 2200 5200 2800
+Wire Wire Line
+	5200 2200 5500 2200
+Wire Wire Line
+	6300 2200 6600 2200
+Wire Wire Line
+	5500 2200 6300 2200
+Wire Wire Line
+	2450 2600 2450 2700
+Wire Wire Line
+	1850 2800 1850 3300
 $EndSCHEMATC
