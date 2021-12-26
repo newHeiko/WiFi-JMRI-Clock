@@ -319,7 +319,7 @@ void writeMainPage()
     }
   }
 
-  char timeString[9];
+  char timeString[12];
 
   String resp = String("<!DOCTYPE HTML>\r\n")
                 + "<html><head><title>wiClock configuration page</title></head>\r\n"
