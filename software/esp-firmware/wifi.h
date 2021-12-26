@@ -23,9 +23,6 @@
 
 #include <vector>
 
-#define SSID_CHARS 21
-#define KEY_CHARS 21
-
 typedef struct
 {
   char * ssid;
