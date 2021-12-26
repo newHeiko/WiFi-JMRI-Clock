@@ -19,6 +19,15 @@
  * non-volatile memory.
  */
 
+/*
+ * The SPIFFS code is deprecated, so this file will throw a lot of warnings
+ * which I'm happy to ignore for now.
+ * 
+ * Possibly the project will transition to LittleFS once it's included 
+ * in the standard arduino boards package.
+ */
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 #include <stdbool.h>
 #include <FS.h>
 #include <ArduinoJson.h>
@@ -125,8 +134,7 @@ void initConfig(void)
 // read startup time from SPIFFS - per-clock settings from new system
   for(uint8_t i = 0; i<NUM_CLOCKS; i++)
   {
-    char filename[sizeof(FN_STARTUP_TIME + 1)];
-    snprintf(filename, sizeof(FN_STARTUP_TIME + 1), "%d%s", i, FN_STARTUP_TIME);
+    String filename = String(i) + FN_STARTUP_TIME;
     if(File f = SPIFFS.open(filename, "r"))
     {
       if(!deserializeJson(doc, f))
@@ -175,8 +183,7 @@ void initConfig(void)
 // read clock configuration from SPIFFS - per-clock settings from new system
   for(uint8_t i = 0; i<NUM_CLOCKS; i++)
   {
-    char filename[sizeof(FN_CLOCK_CONFIG + 1)];
-    snprintf(filename, sizeof(FN_CLOCK_CONFIG + 1), "%d%s", i, FN_CLOCK_CONFIG);
+    String filename = String(i) + FN_CLOCK_CONFIG;
     if(File f = SPIFFS.open(filename, "r"))
     {
       if(!deserializeJson(doc, f))
@@ -277,8 +284,7 @@ void saveClockStartup(uint8_t clockID)
   doc[FIELD_STARTUP_SECOND] = startupTime[clockID].seconds;
   doc[FIELD_STARTUP_RATE] = startupTime[clockID].rate10;
 
-  char filename[sizeof(FN_STARTUP_TIME + 1)];
-  snprintf(filename, sizeof(FN_STARTUP_TIME + 1), "%d%s", clockID, FN_STARTUP_TIME);
+  String filename = String(clockID) + FN_STARTUP_TIME;
 
   if(File f = SPIFFS.open(filename, "w"))
   {
@@ -306,14 +312,14 @@ void saveClockConfig(uint8_t clockID)
   }
   doc[FIELD_CLOCK_OFFSET] = clockOffset;
 
-  char filename[sizeof(FN_CLOCK_CONFIG + 1)];
+  String filename;
   if(clockID < NUM_CLOCKS)
   {
-    snprintf(filename, sizeof(FN_CLOCK_CONFIG + 1), "%d%s", clockID, FN_CLOCK_CONFIG);
+    filename = String(clockID) + FN_CLOCK_CONFIG;
   }
   else
   {
-    strncpy(filename, FN_CLOCK_CONFIG, sizeof(filename));
+    filename = FN_CLOCK_CONFIG;
   }
    
   if(File f = SPIFFS.open(filename, "w"))
