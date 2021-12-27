@@ -34,8 +34,6 @@ clockInfo clockHW[NUM_CLOCKS];
 clockTime networkTime;
 clockTime startupTime[NUM_CLOCKS];
 
-int8_t clockOffset;
-
 serverInfo clockServer;
 char * automaticServer;
 IPAddress automaticServerIP;
@@ -230,7 +228,6 @@ void clockHandler(void)
 
             if(temp.hours < 24 && temp.minutes < 60 && temp.seconds < 60)
             {
-              temp.hours += clockOffset;
               temp.hours %= 12;
               // only change networkSecond timer if rate has changed to avoid glitches
               if(temp.rate10 != networkTime.rate10)

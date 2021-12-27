@@ -38,7 +38,6 @@
 #define FN_CLOCK_CONFIG "clockConfig.txt"
 #define FIELD_CLOCK_MAXRATE "maxRate"
 #define FIELD_CLOCK_PULSELENGTH "pulseLength"
-#define FIELD_CLOCK_OFFSET "offset"
 #define FIELD_CLOCK_MINUTEMODE "minutemode"
 
 #define FN_SERVER "server.txt"

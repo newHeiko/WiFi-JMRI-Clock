@@ -317,13 +317,6 @@ void writeMainPage()
     }
   }
 
-  // check if this is a "set clock offset" request
-  if (server.hasArg("clock.offset"))
-  {
-    clockOffset = server.arg("clock.offset").toInt();
-    saveClockConfig(NUM_CLOCKS);    
-  }
-
   // check if this is a "set clock time" request
   if (server.hasArg("clock.time") && server.hasArg("clock.ID"))
   {
@@ -387,10 +380,7 @@ void writeMainPage()
                 + "<td>http://<input type=\"text\" name=\"clock.serverName\" value=\"" + clockServer.name + "\">:<input type=\"text\" name=\"clock.serverPort\" value=\"" + clockServer.port + "\">/json/time</td></tr>"
                 + "<tr><td>Find server automatically through Zeroconf/Bonjour?</td><td><input type=\"checkbox\" name=\"clock.automatic\"" + (clockServer.automatic ? " checked" : "") + ">"
                 + "Using http://" + (clockServer.automatic && automaticServer != nullptr ? automaticServer : clockServer.name) + ":" + clockServer.port + "/json/time</td></tr>"
-                + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock server settings\"></td></tr></table></form>"
-                + "<form action=\"index.html\" method=\"get\"><table border=0>"
-                + "<tr><td>Clock offset from UTC (hours):</td><td><input type=\"text\" name=\"clock.offset\" value=\"" + clockOffset + "\"></td></tr>"
-                + "<tr><td colspan=2><input type = \"submit\" value=\"Set clock offset\"></td></tr></table></form>";
+                + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock server settings\"></td></tr></table></form>";
   
   snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", networkTime.hours, networkTime.minutes, networkTime.seconds);
   resp        += String("<table border=0><tr><td>Network time: </td><td>") + timeString + "</td></tr>\r\n"

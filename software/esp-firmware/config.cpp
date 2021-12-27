@@ -63,7 +63,6 @@ void initConfig(void)
     clockHW[i].clockPulseLength = 40;
     clockHW[i].minuteMode = false;
   }
-  clockOffset = 2;
   
   if(!SPIFFS.begin())
   {
@@ -157,10 +156,6 @@ void initConfig(void)
   {
     if(!deserializeJson(doc, f))
     {
-      if(doc.containsKey(FIELD_CLOCK_OFFSET))
-      {
-        clockOffset = doc[FIELD_CLOCK_OFFSET];
-      }
       for(uint8_t i = 0; i<NUM_CLOCKS; i++)
       {
         if(doc.containsKey(FIELD_CLOCK_MAXRATE))
@@ -314,7 +309,6 @@ void saveClockConfig(uint8_t clockID)
     doc[FIELD_CLOCK_PULSELENGTH] = clockHW[clockID].clockPulseLength;
     doc[FIELD_CLOCK_MINUTEMODE] = clockHW[clockID].minuteMode;
   }
-  doc[FIELD_CLOCK_OFFSET] = clockOffset;
 
   String filename;
   if(clockID < NUM_CLOCKS)

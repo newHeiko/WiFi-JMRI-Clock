@@ -45,8 +45,6 @@
 // maximum value for which times are considered to be the same
 #define CLOCK_DELTA 2
 
-extern int8_t clockOffset;
-
 typedef struct
 {
   uint8_t hours;
