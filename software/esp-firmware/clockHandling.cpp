@@ -282,7 +282,7 @@ void clockHandler(void)
       Serial.println("Looking for automatic server");
       Serial.println("Installing service query");
 #endif
-      uint32_t n = MDNS.queryService("http", "tcp");
+      uint32_t n = MDNS.queryService("withrottle", "tcp");
       for(uint32_t i = 0; i < n; i++)
       {
 #ifdef DEBUG

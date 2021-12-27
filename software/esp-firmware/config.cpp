@@ -50,7 +50,7 @@ void initConfig(void)
 
   clockServer.automatic = true;
   clockServer.name = strdup("undef");
-  clockServer.port = 12080;
+  clockServer.port = 12090;
 
   for(uint8_t i=0; i<NUM_CLOCKS; i++)
   {
