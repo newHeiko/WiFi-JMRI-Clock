@@ -54,13 +54,14 @@ void readString(char * dest, size_t maxLength, String input)
 void handleWiFi(void)
 {
   server.handleClient();
-  switch(wiFredState)
+  switch (wiFredState)
   {
     case STATE_CONFIG_AP:
       dnsServer.processNextRequest();
-      // intentional fall-through
+    // intentional fall-through
 
     case STATE_CONNECTED:
+    case STATE_ONLINE:
     case STATE_CONFIG_STATION:
     case STATE_CONFIG_STATION_WAITING:
       MDNS.update();
@@ -74,8 +75,8 @@ void handleWiFi(void)
 }
 
 /**
- * Stop listening on <throttleName>.local, start listening on config.local
- */
+   Stop listening on <throttleName>.local, start listening on config.local
+*/
 void initWiFiConfigSTA(void)
 {
   MDNS.removeService(NULL, "http", "tcp");
@@ -84,24 +85,24 @@ void initWiFiConfigSTA(void)
 }
 
 /**
- * Stop listening on (MDNS) config.local, start listening on <throttleName>.local
- */
+   Stop listening on (MDNS) config.local, start listening on <throttleName>.local
+*/
 void shutdownWiFiConfigSTA(void)
 {
   char * hostName = strdup(throttleName);
-  
-  for(char * src = throttleName, * dst = hostName; *src != 0;)
+
+  for (char * src = throttleName, * dst = hostName; *src != 0;)
+  {
+    if (isalnum(*src))
     {
-      if(isalnum(*src))
-      {
-        *dst++ = *src++;
-      }
-      else
-      {
-        src++;
-      }
-      *dst = 0;
+      *dst++ = *src++;
     }
+    else
+    {
+      src++;
+    }
+    *dst = 0;
+  }
 
 #ifdef DEBUG
   Serial.println(String("Add MDNS ") + hostName + " on throttle name " + throttleName);
@@ -114,30 +115,41 @@ void shutdownWiFiConfigSTA(void)
 
 void initWiFiSTA(void)
 {
+  // count the number of available networks
+  uint32_t numNetworks = 0;
   WiFi.mode(WIFI_STA);
 
-  for(std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); it++)
+  for (std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); it++)
   {
-    wifiMulti.addAP(it->ssid, it->key);
+    if (!it->disabled)
+    {
+      wifiMulti.addAP(it->ssid, it->key);
+      numNetworks++;
+    }
+  }
+  if (numNetworks == 0)
+  {
+    initWiFiAP();
+    switchState(STATE_CONFIG_AP);
   }
 }
 
 void initMDNS(void)
 {
   char * hostName = strdup(throttleName);
-  
-  for(char * src = throttleName, * dst = hostName; *src != 0;)
+
+  for (char * src = throttleName, * dst = hostName; *src != 0;)
+  {
+    if (isalnum(*src))
     {
-      if(isalnum(*src))
-      {
-        *dst++ = *src++;
-      }
-      else
-      {
-        src++;
-      }
-      *dst = 0;
+      *dst++ = *src++;
     }
+    else
+    {
+      src++;
+    }
+    *dst = 0;
+  }
 
 #ifdef DEBUG
   Serial.println(String("Add MDNS ") + hostName + " on throttle name " + throttleName);
@@ -194,7 +206,7 @@ void writeMainPage()
     wifiAPEntry newAP;
 
     newAP.ssid = strdup(server.arg("wifiSSID").c_str());
-    if(strcmp(newAP.ssid, "") == 0)
+    if (strcmp(newAP.ssid, "") == 0)
     {
       free(newAP.ssid);
     }
@@ -206,14 +218,14 @@ void writeMainPage()
       saveWiFiConfig();
     }
   }
-  
+
   // check if this is a "remove WiFi network" request
   // will remove all networks with this SSID
   if (server.hasArg("remove"))
   {
-    for(std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); )
+    for (std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); )
     {
-      if(strcmp(it->ssid, server.arg("remove").c_str()) == 0)
+      if (strcmp(it->ssid, server.arg("remove").c_str()) == 0)
       {
         free(it->ssid);
         free(it->key);
@@ -231,9 +243,9 @@ void writeMainPage()
   // will disable all networks with this SSID
   if (server.hasArg("disable"))
   {
-    for(std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
+    for (std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
     {
-      if(strcmp(it->ssid, server.arg("disable").c_str()) == 0)
+      if (strcmp(it->ssid, server.arg("disable").c_str()) == 0)
       {
         it->disabled = true;
       }
@@ -245,9 +257,9 @@ void writeMainPage()
   // will enable all networks with this SSID
   if (server.hasArg("enable"))
   {
-    for(std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
+    for (std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
     {
-      if(strcmp(it->ssid, server.arg("enable").c_str()) == 0)
+      if (strcmp(it->ssid, server.arg("enable").c_str()) == 0)
       {
         it->disabled = false;
       }
@@ -263,7 +275,7 @@ void writeMainPage()
     clockServer.port = server.arg("clock.serverPort").toInt();
     clockServer.automatic = server.hasArg("clock.automatic");
 
-    if(!clockServer.automatic)
+    if (!clockServer.automatic)
     {
       free(automaticServer);
       automaticServer = nullptr;
@@ -288,7 +300,7 @@ void writeMainPage()
         startupTime[id].seconds = (uint8_t) seconds;
       }
     }
-    if(id < NUM_CLOCKS)
+    if (id < NUM_CLOCKS)
     {
       startupTime[id].rate10 = (uint16_t) 10 * server.arg("clock.startupRate").toFloat();
       if (startupTime[id].rate10 > 10 * clockHW[id].clockMaxTickFrequency && ! clockHW[id].minuteMode)
@@ -299,7 +311,7 @@ void writeMainPage()
       {
         startupTime[id].rate10 = 10 * 60 * clockHW[id].clockMaxTickFrequency;
       }
-    saveClockStartup(id);
+      saveClockStartup(id);
     }
   }
 
@@ -307,7 +319,7 @@ void writeMainPage()
   if (server.hasArg("clock.maxClockRate") && server.hasArg("clock.pulseLength") && server.hasArg("clock.ID"))
   {
     uint8_t id = server.arg("clock.ID").toInt();
-    if(id < NUM_CLOCKS)
+    if (id < NUM_CLOCKS)
     {
       clockHW[id].clockMaxTickFrequency = server.arg("clock.maxClockRate").toInt();
       clockHW[id].clockPulseLength = server.arg("clock.pulseLength").toInt();
@@ -321,7 +333,7 @@ void writeMainPage()
   if (server.hasArg("clock.time") && server.hasArg("clock.ID"))
   {
     uint8_t i = server.arg("clock.ID").toInt();
-    if(i<NUM_CLOCKS)
+    if (i < NUM_CLOCKS)
     {
       String newTime = server.arg("clock.time");
       alignas(4) unsigned int hours, minutes, seconds;
@@ -348,40 +360,40 @@ void writeMainPage()
 
   resp        += String("<hr>wiClock status<hr>\r\n");
 
-  for(uint8_t i=0; i<NUM_CLOCKS; i++)
+  for (uint8_t i = 0; i < NUM_CLOCKS; i++)
   {
     snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", ourTime[i].hours, ourTime[i].minutes, ourTime[i].seconds);
 
     resp        += String("<form action=\"index.html\" method=\"get\"><table border=0>")
-                 + "<tr><th colspan=2>Clock number: " + (i+1) + "</th></tr>\r\n"
-                 + "<tr><td>System time: </td><td><input type=\"text\" name=\"clock.time\" value=\"" + timeString + "\">"
-                 + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\">"
-                 + "<input type=\"submit\" value=\"Set Time\"></td></tr></form>\r\n"
-                 + "<tr><td>Clock rate " + (i+1) + ": </td><td>" + (ourTime[i].rate10 / 10.0) + "</td></tr></table></form>\r\n";
+                   + "<tr><th colspan=2>Clock number: " + (i + 1) + "</th></tr>\r\n"
+                   + "<tr><td>System time: </td><td><input type=\"text\" name=\"clock.time\" value=\"" + timeString + "\">"
+                   + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\">"
+                   + "<input type=\"submit\" value=\"Set Time\"></td></tr></form>\r\n"
+                   + "<tr><td>Clock rate " + (i + 1) + ": </td><td>" + (ourTime[i].rate10 / 10.0) + "</td></tr></table></form>\r\n";
 
     snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", startupTime[i].hours, startupTime[i].minutes, startupTime[i].seconds);
 
     resp        += String("<form action=\"index.html\" method=\"get\"><table border=0>")
-                 + "<tr><td>Startup time (format: H:M:S):</td><td><input type=\"text\" name=\"clock.startUp\" value=\"" + timeString + "\"></td></tr>"
-                 + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\">"
-                 + "<tr><td>Startup clock rate:</td><td><input type=\"text\" name=\"clock.startupRate\" value=\"" + startupTime[i].rate10 / 10.0 + "\"></td></tr>"
-                 + "<tr><td colspan=2><input type=\"submit\" value=\"Save startup time and rate\"></td></tr></table></form>"
-                 + "<form action=\"index.html\" method=\"get\"><table border=0>"
-                 + "<tr><td>Maximum clock tick frequency:</td><td><input type=\"text\" name=\"clock.maxClockRate\" value=\"" + clockHW[i].clockMaxTickFrequency + "\"></td></tr>"
-                 + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\">"
-                 + "<tr><td>Pulse length for clock (milliseconds):</td><td><input type=\"text\" name=\"clock.pulseLength\" value=\"" + clockHW[i].clockPulseLength + "\"></td></tr>"
-                 + "<tr><td>Clock ticks once per minute:</td><td><input type=\"checkbox\" name=\"clock.minuteMode\"" + (clockHW[i].minuteMode ? " checked" : "") + "></td></tr>"
-                 + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock configuration\"></td></tr></table></form>\r\n";
+                   + "<tr><td>Startup time (format: H:M:S):</td><td><input type=\"text\" name=\"clock.startUp\" value=\"" + timeString + "\"></td></tr>"
+                   + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\">"
+                   + "<tr><td>Startup clock rate:</td><td><input type=\"text\" name=\"clock.startupRate\" value=\"" + startupTime[i].rate10 / 10.0 + "\"></td></tr>"
+                   + "<tr><td colspan=2><input type=\"submit\" value=\"Save startup time and rate\"></td></tr></table></form>"
+                   + "<form action=\"index.html\" method=\"get\"><table border=0>"
+                   + "<tr><td>Maximum clock tick frequency:</td><td><input type=\"text\" name=\"clock.maxClockRate\" value=\"" + clockHW[i].clockMaxTickFrequency + "\"></td></tr>"
+                   + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\">"
+                   + "<tr><td>Pulse length for clock (milliseconds):</td><td><input type=\"text\" name=\"clock.pulseLength\" value=\"" + clockHW[i].clockPulseLength + "\"></td></tr>"
+                   + "<tr><td>Clock ticks once per minute:</td><td><input type=\"checkbox\" name=\"clock.minuteMode\"" + (clockHW[i].minuteMode ? " checked" : "") + "></td></tr>"
+                   + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock configuration\"></td></tr></table></form>\r\n";
   }
 
   resp        += String("<hr>Clock server configuration<hr>")
-                + "<form action=\"index.html\" method=\"get\"><table border=0>"
-                + "<tr><td>Clock server and port: </td>"
-                + "<td>http://<input type=\"text\" name=\"clock.serverName\" value=\"" + clockServer.name + "\">:<input type=\"text\" name=\"clock.serverPort\" value=\"" + clockServer.port + "\">/json/time</td></tr>"
-                + "<tr><td>Find server automatically through Zeroconf/Bonjour?</td><td><input type=\"checkbox\" name=\"clock.automatic\"" + (clockServer.automatic ? " checked" : "") + ">"
-                + "Using http://" + (clockServer.automatic && automaticServer != nullptr ? automaticServer : clockServer.name) + ":" + clockServer.port + "/json/time</td></tr>"
-                + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock server settings\"></td></tr></table></form>";
-  
+                 + "<form action=\"index.html\" method=\"get\"><table border=0>"
+                 + "<tr><td>Clock server and port: </td>"
+                 + "<td>http://<input type=\"text\" name=\"clock.serverName\" value=\"" + clockServer.name + "\">:<input type=\"text\" name=\"clock.serverPort\" value=\"" + clockServer.port + "\">/json/time</td></tr>"
+                 + "<tr><td>Find server automatically through Zeroconf/Bonjour?</td><td><input type=\"checkbox\" name=\"clock.automatic\"" + (clockServer.automatic ? " checked" : "") + ">"
+                 + "Using http://" + (clockServer.automatic && automaticServer != nullptr ? automaticServer : clockServer.name) + ":" + clockServer.port + "/json/time</td></tr>"
+                 + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock server settings\"></td></tr></table></form>";
+
   snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", networkTime.hours, networkTime.minutes, networkTime.seconds);
   resp        += String("<table border=0><tr><td>Network time: </td><td>") + timeString + "</td></tr>\r\n"
                  + "<tr><td>Battery voltage: </td><td>" + batteryVoltage + " mV" + (lowBattery ? " Battery LOW" : "" ) + "</td></tr></table>\r\n"
@@ -393,20 +405,20 @@ void writeMainPage()
   uint32_t numNetworks = 0;
 
   resp        += String("<hr>WiFi configuration<hr>\r\n")
-              + "<table border=0><tr><td colspan=3><a href=scanWifi.html>Scan for networks</a></td></tr>"
-              + "<tr><td colspan=3>Known and enabled WiFi networks:</td></tr>";
-  for(std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
+                 + "<table border=0><tr><td colspan=3><a href=scanWifi.html>Scan for networks</a></td></tr>"
+                 + "<tr><td colspan=3>Known and enabled WiFi networks:</td></tr>";
+  for (std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
   {
-    if(!it->disabled)
+    if (!it->disabled)
     {
       resp += String("<tr><td>Network name: ") + it->ssid + "</td>"
-          + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"remove\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Remove Network\"></form></td>"
-          + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"disable\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Disable Network\"></form></td></tr>\r\n";
+              + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"remove\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Remove Network\"></form></td>"
+              + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"disable\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Disable Network\"></form></td></tr>\r\n";
       numNetworks++;
     }
   }
 
-  if(numNetworks == 0)
+  if (numNetworks == 0)
   {
     resp += String("<tr><td colspan=3>None.</td></tr>");
   }
@@ -414,22 +426,22 @@ void writeMainPage()
 
   resp += String("<tr><td colspan=3>Known but disabled WiFi networks:</td></tr>");
 
-  for(std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
+  for (std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
   {
-    if(it->disabled)
+    if (it->disabled)
     {
       resp += String("<tr><td>Network: ") + it->ssid + "</td>"
-          + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"remove\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Remove Network\"></form></td>"
-          + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"enable\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Enable Network\"></form></td></tr>\r\n";
-      numNetworks++;          
+              + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"remove\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Remove Network\"></form></td>"
+              + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"enable\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Enable Network\"></form></td></tr>\r\n";
+      numNetworks++;
     }
   }
 
-  if(numNetworks == 0)
+  if (numNetworks == 0)
   {
     resp += String("<tr><td colspan=3>None.</td></tr>");
   }
-  
+
   resp        += String("<form action=\"index.html\" method=\"get\"><tr>")
                  + "<td>New SSID: <input type=\"text\" name=\"wifiSSID\"></td>"
                  + "<td>New PSK: <input type=\"text\" name=\"wifiKEY\"></td>"
@@ -438,8 +450,8 @@ void writeMainPage()
 
   resp        += String("<a href=restart.html>Restart wiClock to enable new WiFi settings</a>\r\n")
                  + " WiFi settings will not be active until restart.\r\n";
-                               
-                 
+
+
   resp        += String("<hr>wiClock system<hr>\r\n")
                  + "<table><tr><td>Active WiFi network SSID:</td><td>" + (WiFi.isConnected() ? WiFi.SSID() : "not connected") + "</td></tr>"
                  + "<tr><td>Signal strength:</td><td>" + (WiFi.isConnected() ? (String) WiFi.RSSI() + "dB" : "not connected") + "</td></tr></table>"
@@ -455,18 +467,18 @@ void writeMainPage()
 void scanWifi()
 {
   uint32_t n = WiFi.scanNetworks();
-  
+
   String resp = String("<!DOCTYPE HTML>\r\n")
                 + "<html><head><title>Scan for WiFi networks</title></head>"
                 + "<body><h1>Results of WiFi scan</h1>"
                 + "<table border=0>";
 
-  if(n == 0)
+  if (n == 0)
   {
     resp += String("<tr><td>No WiFi networks found. Reload to repeat scan.</td></tr>");
   }
-  
-  for(uint32_t i = 0; i < n; i++)
+
+  for (uint32_t i = 0; i < n; i++)
   {
     resp += String("<form action=\"index.html\" method = \"get\">")
             + "<tr><td>" + WiFi.SSID(i) + "<input type=\"hidden\" name=\"wifiSSID\" value=\"" + WiFi.SSID(i) + "\"></td>"
@@ -488,7 +500,7 @@ void restartESP()
 
 void resetESP()
 {
-  if(server.hasArg("reallyReset"))
+  if (server.hasArg("reallyReset"))
   {
     deleteAllConfig();
     restartESP();
@@ -503,7 +515,7 @@ void resetESP()
                   + "<tr><td><a href=\"/index.html\">No, return to configuration page</a></td></tr>\r\n"
                   + "</table>\r\n"
                   + "</body></html>";
-    server.send(200, "text/html", resp);    
+    server.send(200, "text/html", resp);
   }
 }
 

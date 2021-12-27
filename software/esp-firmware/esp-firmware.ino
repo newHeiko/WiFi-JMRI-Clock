@@ -57,7 +57,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   handleWiFi();
-  clockHandler();
+  handleNewTime();
   lowBatteryHandler();
 
 #ifdef DEBUG
@@ -81,8 +81,8 @@ void loop() {
   {
     case STATE_STARTUP:
       setLED(100, 200);
-      initWiFiSTA();
       switchState(STATE_CONNECTING, 60 * 1000);
+      initWiFiSTA();
       break;
       
     case STATE_CONNECTING:
@@ -91,7 +91,7 @@ void loop() {
       {
         setLED(25, 50);
         initMDNS();
-        switchState(STATE_CONNECTED);
+        switchState(STATE_CONNECTED, 60 * 1000);
       }
       else if(millis() > stateTimeout)
       {
@@ -107,12 +107,30 @@ void loop() {
         initWiFiConfigSTA();
         switchState(STATE_CONFIG_STATION_WAITING, 120 * 1000);
         break;
-      }
+      }      
 
       if(WiFi.status() != WL_CONNECTED)
       {
         switchState(STATE_STARTUP);
+        break;
       }
+      clockConnect();
+      break;
+
+    case STATE_ONLINE:
+      if(getInputPressed(KEY_CONFIG) == true)
+      {
+        initWiFiConfigSTA();
+        switchState(STATE_CONFIG_STATION_WAITING, 120 * 1000);
+        break;
+      }      
+
+      if(WiFi.status() != WL_CONNECTED)
+      {
+        switchState(STATE_STARTUP);
+        break;
+      }
+      clockHandler();
       break;
 
     case STATE_CONFIG_STATION_WAITING:

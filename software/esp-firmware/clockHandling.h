@@ -85,8 +85,24 @@ extern serverInfo clockServer;
 extern char * automaticServer;
 extern IPAddress automaticServerIP;
 
+/**
+ * Initialize clock hardware / timers
+ */
 void initClock(void);
 
+/**
+ * Handles new time and key presses
+ */
+void handleNewTime(void);
+
+/**
+ * Connect to wiThrottle server
+ */
+void clockConnect(void);
+
+/**
+ * Check for and handle data from wiThrottle server
+ */
 void clockHandler(void);
 
 #endif
