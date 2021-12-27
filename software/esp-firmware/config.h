@@ -52,6 +52,7 @@
 #define FN_WIFI_STUB "wifi"
 #define FIELD_WIFI_SSID "ssid"
 #define FIELD_WIFI_PSK "key"
+#define FIELD_WIFI_DISABLED "disabled"
 
 /**
  * A user-given name for this device

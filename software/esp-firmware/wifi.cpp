@@ -227,6 +227,34 @@ void writeMainPage()
     saveWiFiConfig();
   }
 
+  // check if this is a "disable WiFi network" request
+  // will disable all networks with this SSID
+  if (server.hasArg("disable"))
+  {
+    for(std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
+    {
+      if(strcmp(it->ssid, server.arg("disable").c_str()) == 0)
+      {
+        it->disabled = true;
+      }
+    }
+    saveWiFiConfig();
+  }
+
+  // check if this is an "enable WiFi network" request
+  // will enable all networks with this SSID
+  if (server.hasArg("enable"))
+  {
+    for(std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
+    {
+      if(strcmp(it->ssid, server.arg("enable").c_str()) == 0)
+      {
+        it->disabled = false;
+      }
+    }
+    saveWiFiConfig();
+  }
+
   // check if this is a "set clock server" request
   if (server.hasArg("clock.serverName") && server.hasArg("clock.serverPort"))
   {
@@ -369,31 +397,66 @@ void writeMainPage()
                  + "<tr><td>Battery voltage: </td><td>" + batteryVoltage + " mV" + (lowBattery ? " Battery LOW" : "" ) + "</td></tr></table>\r\n"
                  + "<hr>General configuration<hr>\r\n"
                  + "<form action=\"index.html\" method=\"get\"><table border=0>"
-                 + "<tr><td>Throttle name:</td><td><input type=\"text\" name=\"throttleName\" value=\"" + throttleName + "\"></td></tr>"
-                 + "<tr><td colspan=2><input type=\"submit\" value=\"Save name\"></td></tr></table></form>\r\n"
-                 + "<hr>WiFi configuration<hr>\r\n"
-                 + "<table border=0><tr><td>Active WiFi network SSID:</td><td>" + (WiFi.isConnected() ? WiFi.SSID() : "not connected") + "</td><td><a href=scanWifi.html>Scan for networks</a></td></tr>"
-                 + "<tr><td colspan=3>Known WiFi networks:</td></tr>";
+                 + "<tr><td>Device name:</td><td><input type=\"text\" name=\"throttleName\" value=\"" + throttleName + "\"></td></tr>"
+                 + "<tr><td colspan=2><input type=\"submit\" value=\"Save name\"></td></tr></table></form>\r\n";
+
+  uint32_t numNetworks = 0;
+
+  resp        += String("<hr>WiFi configuration<hr>\r\n")
+              + "<table border=0><tr><td colspan=3><a href=scanWifi.html>Scan for networks</a></td></tr>"
+              + "<tr><td colspan=3>Known and enabled WiFi networks:</td></tr>";
   for(std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
   {
-    resp += String("<tr><td>SSID: ") + it->ssid + "</td><td>PSK: " + it->key + "</td>"
-          + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"remove\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Remove SSID\"></form></td></tr>\r\n";
+    if(!it->disabled)
+    {
+      resp += String("<tr><td>Network name: ") + it->ssid + "</td>"
+          + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"remove\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Remove Network\"></form></td>"
+          + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"disable\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Disable Network\"></form></td></tr>\r\n";
+      numNetworks++;
+    }
   }
 
-  resp        += String("</table><form action=\"index.html\" method=\"get\"><table border=0><tr>")
+  if(numNetworks == 0)
+  {
+    resp += String("<tr><td colspan=3>None.</td></tr>");
+  }
+  numNetworks = 0;
+
+  resp += String("<tr><td colspan=3>Known but disabled WiFi networks:</td></tr>");
+
+  for(std::vector<wifiAPEntry>::iterator it = apList.begin() ; it != apList.end(); ++it)
+  {
+    if(it->disabled)
+    {
+      resp += String("<tr><td>Network: ") + it->ssid + "</td>"
+          + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"remove\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Remove Network\"></form></td>"
+          + "<td><form action=\"index.html\" method=\"get\"><input type=\"hidden\" name=\"enable\" value=\"" + it->ssid + "\"><input type=\"submit\" value=\"Enable Network\"></form></td></tr>\r\n";
+      numNetworks++;          
+    }
+  }
+
+  if(numNetworks == 0)
+  {
+    resp += String("<tr><td colspan=3>None.</td></tr>");
+  }
+  
+  resp        += String("<form action=\"index.html\" method=\"get\"><tr>")
                  + "<td>New SSID: <input type=\"text\" name=\"wifiSSID\"></td>"
                  + "<td>New PSK: <input type=\"text\" name=\"wifiKEY\"></td>"
                  + "<td><input type = \"submit\" value=\"Manually add network\"></td>"
-                 +  "</tr></table></form>\r\n";
+                 +  "</tr></form></table>\r\n";
 
   resp        += String("<a href=restart.html>Restart wiClock to enable new WiFi settings</a>\r\n")
-                 + " WiFi settings will not be active until restart.\r\n"
-                
-                + "<hr>wiClock system<hr>\r\n"
-                + "<a href=resetConfig.html>Reset wiClock to factory defaults</a>\r\n"
-                + "<a href=update>Update wiClock firmware</a>\r\n"
-                + "Firmware revision: " + REV + " \r\n"
-                + "</body></html>";
+                 + " WiFi settings will not be active until restart.\r\n";
+                               
+                 
+  resp        += String("<hr>wiClock system<hr>\r\n")
+                 + "<table><tr><td>Active WiFi network SSID:</td><td>" + (WiFi.isConnected() ? WiFi.SSID() : "not connected") + "</td></tr>"
+                 + "<tr><td>Signal strength:</td><td>" + (WiFi.isConnected() ? (String) WiFi.RSSI() + "dB" : "not connected") + "</td></tr></table>"
+                 + "<a href=resetConfig.html>Reset wiClock to factory defaults</a>\r\n"
+                 + "<a href=update>Update wiClock firmware</a>\r\n"
+                 + "Firmware revision: " + REV + " \r\n"
+                 + "</body></html>";
 
 
   server.send(200, "text/html", resp);
