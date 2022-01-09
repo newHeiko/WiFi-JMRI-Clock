@@ -101,6 +101,11 @@ void handleNewTime(void);
 void clockConnect(void);
 
 /**
+ * Register with wiThrottle server
+ */
+void clockServerRegister(void);
+
+/**
  * Check for and handle data from wiThrottle server
  */
 void clockHandler(void);

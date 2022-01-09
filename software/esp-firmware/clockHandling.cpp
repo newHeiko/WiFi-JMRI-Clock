@@ -38,7 +38,8 @@ serverInfo clockServer;
 char * automaticServer;
 IPAddress automaticServerIP;
 
-volatile bool flagGetTime = true;
+WiFiClient client;
+
 volatile bool flagNewTime = false;
 
 void resetClockOutputs(clockInfo * clockID)
@@ -297,120 +298,135 @@ void initClock(void)
 }
 
 /**
-   Connect to wiThrottle server
-*/
+ * Connect to wiThrottle server
+ */
 void clockConnect(void)
 {
+  if(clockServer.automatic && automaticServer != nullptr)
+  {
+    if(client.connect(automaticServerIP, clockServer.port))
+    {
+      client.setNoDelay(true);
+      client.setTimeout(10);
+      switchState(STATE_SERVERCONN, 10 * 1000);
+    }
+    else
+    {
+      free(automaticServer);
+      automaticServer = nullptr;
+    }
+  }
+  else if(!clockServer.automatic)
+  {
+    if(client.connect(clockServer.name, clockServer.port))
+    {
+      client.setNoDelay(true);
+      client.setTimeout(10);
+      switchState(STATE_SERVERCONN, 10 * 1000);
+    }
+  }
+
+  if(clockServer.automatic && automaticServer == nullptr
+     && (wiFredState == STATE_CONNECTED || wiFredState == STATE_CONFIG_AP) )
+  {
+    uint32_t n = MDNS.queryService("withrottle", "tcp");
+    for(uint32_t i = 0; i < n; i++)
+    {
+      if(MDNS.port(i) == clockServer.port)
+      {
+        automaticServer = strdup(MDNS.hostname(i).c_str());
+        automaticServerIP = MDNS.IP(i);
+        break;          
+      }
+    }
+    if(n == 0)
+    {
+      automaticServerIP = WiFi.localIP();
+      automaticServerIP[3] = 1;
+      automaticServer = strdup(automaticServerIP.toString().c_str());
+    }
+  }
+}
+
+/**
+ * Initialize connection to wiThrottle server with client ID etc. after receiving the greeting message
+ */
+void clockServerRegister(void)
+{
+  if(client.connected())
+  {
+    client.print(String("N") + throttleName + "\n");
+  
+    if(client.available())
+    {
+      String line = client.readStringUntil('\n');
+      if (line.startsWith("VN2.0"))
+      {
+        uint8_t mac[6];
+        WiFi.macAddress(mac);
+        String id = String(mac[0], 16) + String(mac[1], 16) + String(mac[2], 16) + String(mac[3], 16) + String(mac[4], 16) + String(mac[5], 16);
+        client.print("HU" + id + "\n");
+        switchState(STATE_ONLINE);
+      }
+    }
+  }
+  else
+  {
+    setLED(25, 50);
+    switchState(STATE_CONNECTED);
+  }
 }
 
 void clockHandler(void)
 {
-  // try to get time from network if we are connected to WLAN
-  if (flagGetTime && wiFredState == STATE_CONNECTED)
+  while (client.available())
   {
-    static WiFiClient client;
-
-    if (client.available())
+    String line = client.readStringUntil('\n');
+    // is this the data line we are looking for?
+    if (line.startsWith("PFT"))
     {
-      String line = client.readStringUntil('\n');
-      // is this the data line we are looking for?
-      if (line.indexOf("{\"type\":\"time\"") != -1)
+      int32_t timeStamp;
+      float rate;
+
+      if(sscanf(line.c_str(), "PFT%d<;>%f", &timeStamp, &rate) == 2)
       {
-        // turn off LED at first nicely received response
-        setLED(0, 100);
-        flagGetTime = false;
-
-        client.flush();
-
+        // turn LED off on response
+        setLED(0, 200);
         clockTime temp;
-        size_t pos;
-        pos = line.indexOf("T");
-        temp.hours = line.substring(pos + 1).toInt();
-        temp.minutes = line.substring(pos + 4).toInt();
-        temp.seconds = line.substring(pos + 7).toInt();
 
-        pos = line.indexOf("rate");
-        temp.rate10 = (uint8_t) (line.substring(pos + sizeof("rate") + 1).toFloat() * 10);
+        // convert timeStamp received to hours (0...12), minutes and seconds, ignore date
+        timeStamp %= 12 * 60 * 60;
+        temp.hours = timeStamp / (60 * 60);
+        timeStamp %= 60 * 60;        
+        temp.minutes = timeStamp / 60;
+        timeStamp %= 60;
+        temp.seconds = timeStamp;
 
-        pos = line.indexOf("state");
-        uint8_t state = line.substring(pos + sizeof("state") + 1).toInt();
-        if (state == 4)
+        temp.rate10 = rate * 10;
+
+        // only change networkSecond timer if rate has changed to avoid glitches
+        if (temp.rate10 != networkTime.rate10)
         {
-          temp.rate10 = 0;
-        }
-
-        if (temp.hours < 24 && temp.minutes < 60 && temp.seconds < 60)
-        {
-          temp.hours %= 12;
-          // only change networkSecond timer if rate has changed to avoid glitches
-          if (temp.rate10 != networkTime.rate10)
+          if (temp.rate10 != 0)
           {
-            if (temp.rate10 != 0)
-            {
-              networkTime.secondTicker->attach(10.0 / temp.rate10, plusOneSecond, &networkTime);
-            }
-            else
-            {
-              networkTime.secondTicker->detach();
-            }
+            networkTime.secondTicker->attach(10.0 / temp.rate10, plusOneSecond, &networkTime);
           }
-          networkTime.seconds = temp.seconds;
-          networkTime.minutes = temp.minutes;
-          networkTime.hours = temp.hours;
-          networkTime.rate10 = temp.rate10;
-          flagNewTime = true;
+          else
+          {
+            networkTime.secondTicker->detach();
+          }
         }
-      }
-    }
-    else if (client.connected())
-    {
-      client.setNoDelay(true);
-      client.setTimeout(10);
-      client.print(String("GET /json/time") + " HTTP/1.1\r\n" +
-                   "Host: " + (clockServer.automatic && automaticServer != nullptr ? automaticServer : clockServer.name) + "\r\n" +
-                   "Connection: close\r\n" +
-                   "\r\n"
-                  );
-    }
-    else
-    {
-      if (clockServer.automatic && automaticServer != nullptr)
-      {
-#ifdef DEBUG
-        Serial.println("Trying to connect to automatic server...");
-#endif
-        client.connect(automaticServerIP, clockServer.port);
-      }
-      else if (!clockServer.automatic)
-      {
-        client.connect(clockServer.name, clockServer.port);
+        networkTime.seconds = temp.seconds;
+        networkTime.minutes = temp.minutes;
+        networkTime.hours = temp.hours;
+        networkTime.rate10 = temp.rate10;
+        flagNewTime = true;
       }
     }
   }
-
-  if (clockServer.automatic && automaticServer == nullptr && flagGetTime
-      && (wiFredState == STATE_CONNECTED || wiFredState == STATE_CONFIG_AP) )
+  if(!client.connected())
   {
-#ifdef DEBUG
-    Serial.println("Looking for automatic server");
-    Serial.println("Installing service query");
-#endif
-    uint32_t n = MDNS.queryService("withrottle", "tcp");
-    for (uint32_t i = 0; i < n; i++)
-    {
-#ifdef DEBUG
-      Serial.print(String("Hostname: ") + MDNS.hostname(i) + " IP ");
-      Serial.print(MDNS.IP(i));
-      Serial.println(String(" port ") + MDNS.port(i));
-#endif
-      if (MDNS.port(i) == clockServer.port)
-      {
-        automaticServer = strdup(MDNS.hostname(i).c_str());
-        automaticServerIP = MDNS.IP(i);
-        MDNS.removeQuery();
-        break;
-      }
-    }
-    flagGetTime = false;
+    setLED(25, 50);
+    switchState(STATE_CONNECTED);
   }
 }

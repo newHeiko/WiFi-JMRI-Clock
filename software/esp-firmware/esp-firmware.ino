@@ -102,24 +102,11 @@ void loop() {
       break;
 
     case STATE_CONNECTED:
-      if(getInputPressed(KEY_CONFIG) == true)
-      {
-        initWiFiConfigSTA();
-        switchState(STATE_CONFIG_STATION_WAITING, 120 * 1000);
-        break;
-      }      
-
-      if(WiFi.status() != WL_CONNECTED)
-      {
-        switchState(STATE_STARTUP);
-        break;
-      }
-      clockConnect();
-      break;
-
+    case STATE_SERVERCONN:
     case STATE_ONLINE:
       if(getInputPressed(KEY_CONFIG) == true)
       {
+        setLED(100, 100);
         initWiFiConfigSTA();
         switchState(STATE_CONFIG_STATION_WAITING, 120 * 1000);
         break;
@@ -130,7 +117,20 @@ void loop() {
         switchState(STATE_STARTUP);
         break;
       }
-      clockHandler();
+      switch(wiFredState)
+      {
+        case STATE_CONNECTED:
+          clockConnect();
+          break;
+        case STATE_SERVERCONN:
+          clockServerRegister();
+          break;
+        case STATE_ONLINE:
+          clockHandler();
+          break;
+        default:
+          break;
+      }
       break;
 
     case STATE_CONFIG_STATION_WAITING:
@@ -160,6 +160,7 @@ void loop() {
 
     case STATE_CONFIG_AP:
     // no way to get out of here except for restart
+      setLED(190, 200);
       break;
   }
 }

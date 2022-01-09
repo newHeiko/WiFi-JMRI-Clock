@@ -61,6 +61,7 @@ void handleWiFi(void)
     // intentional fall-through
 
     case STATE_CONNECTED:
+    case STATE_SERVERCONN:
     case STATE_ONLINE:
     case STATE_CONFIG_STATION:
     case STATE_CONFIG_STATION_WAITING:
