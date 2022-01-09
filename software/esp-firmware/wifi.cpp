@@ -359,7 +359,18 @@ void writeMainPage()
                 + "<html><head><title>wiClock configuration page</title></head>\r\n"
                 + "<body><h1>wiClock configuration page</h1>\r\n";
 
-  resp        += String("<hr>wiClock status<hr>\r\n");
+  resp        += String("<hr>General configuration and status<hr>\r\n")
+                + "<form action=\"index.html\" method=\"get\"><table border=0>"
+                + "<tr><td>Device name:</td><td><input type=\"text\" name=\"throttleName\" value=\"" + throttleName + "\"></td><td><input type=\"submit\" value=\"Save name\"></td></tr></table></form>\r\n";
+  
+  snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", networkTime.hours, networkTime.minutes, networkTime.seconds);
+  
+  resp        += String("<table border=0><tr><td>Network time: </td><td>") + timeString + "</td><td>and rate: </td><td>" + networkTime.rate10 / 10 + "</td></tr>\r\n"
+                 + "<tr><td>Battery voltage: </td><td>" + batteryVoltage + " mV</td><td>" + (lowBattery ? "Battery LOW" : "" ) + "</td><td></td></tr>\r\n"
+                 + "<tr><td>Firmware revision:</td><td colspan=3>" + REV + "</td></tr></table>\r\n"
+                 + "<table><tr><td>Active WiFi network SSID:</td><td>" + (WiFi.isConnected() ? WiFi.SSID() : "not connected") + "</td></tr>"
+                 + "<tr><td>Signal strength:</td><td>" + (WiFi.isConnected() ? (String) WiFi.RSSI() + "dB" : "not connected") + "</td></tr></table>"
+                 + "<hr>";
 
   for (uint8_t i = 0; i < NUM_CLOCKS; i++)
   {
@@ -386,22 +397,6 @@ void writeMainPage()
                    + "<tr><td>Clock ticks once per minute:</td><td><input type=\"checkbox\" name=\"clock.minuteMode\"" + (clockHW[i].minuteMode ? " checked" : "") + "></td></tr>"
                    + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock configuration\"></td></tr></table></form>\r\n";
   }
-
-  resp        += String("<hr>Clock server configuration<hr>")
-                 + "<form action=\"index.html\" method=\"get\"><table border=0>"
-                 + "<tr><td>Clock server and port: </td>"
-                 + "<td>http://<input type=\"text\" name=\"clock.serverName\" value=\"" + clockServer.name + "\">:<input type=\"text\" name=\"clock.serverPort\" value=\"" + clockServer.port + "\">/json/time</td></tr>"
-                 + "<tr><td>Find server automatically through Zeroconf/Bonjour?</td><td><input type=\"checkbox\" name=\"clock.automatic\"" + (clockServer.automatic ? " checked" : "") + ">"
-                 + "Using http://" + (clockServer.automatic && automaticServer != nullptr ? automaticServer : clockServer.name) + ":" + clockServer.port + "/json/time</td></tr>"
-                 + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock server settings\"></td></tr></table></form>";
-
-  snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", networkTime.hours, networkTime.minutes, networkTime.seconds);
-  resp        += String("<table border=0><tr><td>Network time: </td><td>") + timeString + "</td></tr>\r\n"
-                 + "<tr><td>Battery voltage: </td><td>" + batteryVoltage + " mV" + (lowBattery ? " Battery LOW" : "" ) + "</td></tr></table>\r\n"
-                 + "<hr>General configuration<hr>\r\n"
-                 + "<form action=\"index.html\" method=\"get\"><table border=0>"
-                 + "<tr><td>Device name:</td><td><input type=\"text\" name=\"throttleName\" value=\"" + throttleName + "\"></td></tr>"
-                 + "<tr><td colspan=2><input type=\"submit\" value=\"Save name\"></td></tr></table></form>\r\n";
 
   uint32_t numNetworks = 0;
 
@@ -452,13 +447,17 @@ void writeMainPage()
   resp        += String("<a href=restart.html>Restart wiClock to enable new WiFi settings</a>\r\n")
                  + " WiFi settings will not be active until restart.\r\n";
 
+  resp        += String("<hr>Clock server configuration<hr>")
+                 + "<form action=\"index.html\" method=\"get\"><table border=0>"
+                 + "<tr><td>Clock server and port: </td>"
+                 + "<td>http://<input type=\"text\" name=\"clock.serverName\" value=\"" + clockServer.name + "\">:<input type=\"text\" name=\"clock.serverPort\" value=\"" + clockServer.port + "\">/json/time</td></tr>"
+                 + "<tr><td>Find server automatically through Zeroconf/Bonjour?</td><td><input type=\"checkbox\" name=\"clock.automatic\"" + (clockServer.automatic ? " checked" : "") + ">"
+                 + "Using http://" + (clockServer.automatic && automaticServer != nullptr ? automaticServer : clockServer.name) + ":" + clockServer.port + "/json/time</td></tr>"
+                 + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock server settings\"></td></tr></table></form>";
 
   resp        += String("<hr>wiClock system<hr>\r\n")
-                 + "<table><tr><td>Active WiFi network SSID:</td><td>" + (WiFi.isConnected() ? WiFi.SSID() : "not connected") + "</td></tr>"
-                 + "<tr><td>Signal strength:</td><td>" + (WiFi.isConnected() ? (String) WiFi.RSSI() + "dB" : "not connected") + "</td></tr></table>"
                  + "<a href=resetConfig.html>Reset wiClock to factory defaults</a>\r\n"
                  + "<a href=update>Update wiClock firmware</a>\r\n"
-                 + "Firmware revision: " + REV + " \r\n"
                  + "</body></html>";
 
 
