@@ -42,10 +42,17 @@ WiFiClient client;
 
 volatile bool flagNewTime = false;
 
+void setClockOutputs(clockInfo * clockID);
+
 void resetClockOutputs(clockInfo * clockID)
 {
   digitalWrite(clockID->pin1, HIGH);
   digitalWrite(clockID->pin2, HIGH);
+  if(clockID->tickPerIncrement > 0)
+  {
+    clockID->tickPerIncrement--;
+    clockID->resetTicker->once_ms(clockID->clockPulseLength, setClockOutputs, clockID);
+  }
 }
 
 void setClockOutputs(clockInfo * clockID)
@@ -85,19 +92,7 @@ void plusOneSecond(clockTime * input)
 void everyHardwareHalfSecond(uint8_t clockID)
 {
   clockHW[clockID].tickCounter++;
-  if (clockHW[clockID].clockMode == CLOCK_MODE_MINUTE)
-  {
-    clockHW[clockID].tickCounter %= 2;
-    if (clockHW[clockID].tickCounter == 0)
-    {
-      plusOneSecond(&ourTime[clockID]);
-      if (ourTime[clockID].seconds == 0)
-      {
-        setClockOutputs(&clockHW[clockID]);
-      }
-    }
-  }
-  else
+  if(clockHW[clockID].clockMode == CLOCK_MODE_SECOND)
   {
     clockHW[clockID].tickCounter %= 4;
     if (  (clockHW[clockID].tickCounter == 0)
@@ -106,6 +101,27 @@ void everyHardwareHalfSecond(uint8_t clockID)
     {
       plusOneSecond(&ourTime[clockID]);
       setClockOutputs(&clockHW[clockID]);
+    }
+  }
+  else
+  {
+    clockHW[clockID].tickCounter %= 2;
+    if (clockHW[clockID].tickCounter == 0)
+    {
+      plusOneSecond(&ourTime[clockID]);
+      if(clockHW[clockID].clockMode == CLOCK_MODE_SWEEP16SECOND)
+      {
+        clockHW[clockID].tickPerIncrement = 16 - 1;
+        setClockOutputs(&clockHW[clockID]);
+      }
+      else if(ourTime[clockID].seconds == 0)
+      {
+        if(clockHW[clockID].clockMode == CLOCK_MODE_SWEEP16MINUTE)
+        {
+          clockHW[clockID].tickPerIncrement = 16 - 1;
+        }
+        setClockOutputs(&clockHW[clockID]);
+      }
     }
   }
 }
@@ -142,8 +158,14 @@ void setClockRate(uint8_t i)
       break;
     }
 
-  // absolute clock rate limit is 5000 -> 1ms ticker interval
+  // absolute clock rate limit is 5000 -> 1ms ticker interval @ two ticks per second 
   limitClockRate(&(ourTime[i]), 5000);
+
+  // for sweeping second clock, higher ticker rate is required
+  if(clockHW[i].clockMode == CLOCK_MODE_SWEEP16SECOND)
+  {
+    limitClockRate(&(ourTime[i]), 5000 / 16);
+  }
   
   if (ourTime[i].rate10 != 0)
   {
@@ -233,31 +255,40 @@ void handleNewTime(void)
           break;
 
         case CLOCK_MODE_SWEEP16SECOND:
-          clockMaxRate = clockHW[i].clockMaxTickFrequency / 16;
+          clockMaxRate = clockHW[i].clockMaxTickFrequency / 16.0;
           break;
 
         case CLOCK_MODE_SWEEP16MINUTE:
-          clockMaxRate = clockHW[i].clockMaxTickFrequency * 60 / 16;
+          clockMaxRate = clockHW[i].clockMaxTickFrequency * 60 / 16.0;
           break;
       }
 
       // simple cases first
       // if we are already at same speed and close enough, keep doing it
-      if ( (delta < maxDelta || delta > 12 * 3600 - maxDelta) && networkTime.rate10 == ourTime[i].rate10)
+      if ( (delta == 0 || delta > 12 * 3600 - maxDelta) && networkTime.rate10 == ourTime[i].rate10)
       {
         // do nothing
       }
       // if we are into a smaller window, set same rate (if we can run as fast)
-      else if ( (delta < maxDelta || delta > 12 * 3600 - maxDelta) && networkTime.rate10 <= clockMaxRate * 10)
+      else if ( (delta == 0 || delta > 12 * 3600 - maxDelta) && networkTime.rate10 <= clockMaxRate * 10)
       {
         ourTime[i].rate10 = networkTime.rate10;
       }
+      
       // otherwise check if it will be faster to wait for network time or to play catch-up
 
       // network clock not moving, so we need to catch up
       else if (networkTime.rate10 == 0)
       {
-        ourTime[i].rate10 = clockMaxRate * 10;
+        // unless we are only a little bit ahead
+        if(delta > 12 * 3600 - 2 * maxDelta)
+        {
+          ourTime[i].rate10 = 0;
+        }
+        else
+        {
+          ourTime[i].rate10 = clockMaxRate * 10;
+        }
       }
       // network clock faster or same than we can run at all, so stop clock
       // (if same, will start running again once network clock has caught up)

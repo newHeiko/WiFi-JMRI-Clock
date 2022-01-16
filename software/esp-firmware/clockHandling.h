@@ -42,8 +42,8 @@
   #define NUM_CLOCKS 1
 #endif
 
-// maximum value for which times are considered to be the same
-#define CLOCK_DELTA 2
+// maximum value for which times are considered to be the same (ourTime may be ahead of network time, not the other way round!)
+#define CLOCK_DELTA 10
 
 typedef struct
 {
@@ -62,6 +62,7 @@ typedef struct
   uint8_t pin1;
   uint8_t pin2;
   uint8_t tickCounter;
+  uint8_t tickPerIncrement;
   bool nextEdgeHigh;
   clockModes clockMode;
   uint16_t clockPulseLength;
