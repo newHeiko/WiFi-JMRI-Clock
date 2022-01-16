@@ -61,7 +61,7 @@ void initConfig(void)
     
     clockHW[i].clockMaxTickFrequency = 6;
     clockHW[i].clockPulseLength = 40;
-    clockHW[i].minuteMode = false;
+    clockHW[i].clockMode = CLOCK_MODE_SECOND;
   }
   
   if(!SPIFFS.begin())
@@ -168,7 +168,14 @@ void initConfig(void)
         }
         if(doc.containsKey(FIELD_CLOCK_MINUTEMODE))
         {
-          clockHW[i].minuteMode = doc[FIELD_CLOCK_MINUTEMODE];
+          if(doc[FIELD_CLOCK_MINUTEMODE])
+          {
+            clockHW[i].clockMode = CLOCK_MODE_MINUTE;
+          }
+        }
+        if(doc.containsKey(FIELD_CLOCK_MODE))
+        {
+          clockHW[i].clockMode = doc[FIELD_CLOCK_MODE];
         }
       }
     }
@@ -193,7 +200,14 @@ void initConfig(void)
         }
         if(doc.containsKey(FIELD_CLOCK_MINUTEMODE))
         {
-          clockHW[i].minuteMode = doc[FIELD_CLOCK_MINUTEMODE];
+          if(doc[FIELD_CLOCK_MINUTEMODE])
+          {
+            clockHW[i].clockMode = CLOCK_MODE_MINUTE;
+          }
+        }
+        if(doc.containsKey(FIELD_CLOCK_MODE))
+        {
+          clockHW[i].clockMode = doc[FIELD_CLOCK_MODE];
         }
       }
       f.close();
@@ -307,7 +321,7 @@ void saveClockConfig(uint8_t clockID)
   {
     doc[FIELD_CLOCK_MAXRATE] = clockHW[clockID].clockMaxTickFrequency;
     doc[FIELD_CLOCK_PULSELENGTH] = clockHW[clockID].clockPulseLength;
-    doc[FIELD_CLOCK_MINUTEMODE] = clockHW[clockID].minuteMode;
+    doc[FIELD_CLOCK_MODE] = clockHW[clockID].clockMode;
   }
 
   String filename;

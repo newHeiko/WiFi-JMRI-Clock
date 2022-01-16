@@ -85,7 +85,7 @@ void plusOneSecond(clockTime * input)
 void everyHardwareHalfSecond(uint8_t clockID)
 {
   clockHW[clockID].tickCounter++;
-  if (clockHW[clockID].minuteMode)
+  if (clockHW[clockID].clockMode == CLOCK_MODE_MINUTE)
   {
     clockHW[clockID].tickCounter %= 2;
     if (clockHW[clockID].tickCounter == 0)
@@ -110,18 +110,41 @@ void everyHardwareHalfSecond(uint8_t clockID)
   }
 }
 
+/**
+ * If clock rate is larger than maximum, limit to maximum
+ */
+void limitClockRate(clockTime * c, uint16_t maximum)
+{
+  if(c->rate10 > maximum)
+  {
+    c->rate10 = maximum;
+  }
+}
+
 void setClockRate(uint8_t i)
 {
-  if (ourTime[i].rate10 > 10 * clockHW[i].clockMaxTickFrequency && !clockHW[i].minuteMode)
+  switch(clockHW[i].clockMode)
   {
-    ourTime[i].rate10 = 10 * clockHW[i].clockMaxTickFrequency;
-  }
+    case CLOCK_MODE_SECOND:
+      limitClockRate(&(ourTime[i]), 10 * clockHW[i].clockMaxTickFrequency);
+      break;
 
-  if (ourTime[i].rate10 > 10 * 60 * clockHW[i].clockMaxTickFrequency && clockHW[i].minuteMode)
-  {
-    ourTime[i].rate10 = 10 * 60 * clockHW[i].clockMaxTickFrequency;
-  }
+    case CLOCK_MODE_MINUTE:
+      limitClockRate(&(ourTime[i]), 10 * 60 * clockHW[i].clockMaxTickFrequency);
+      break;
 
+    case CLOCK_MODE_SWEEP16SECOND:
+      limitClockRate(&(ourTime[i]), 10 * clockHW[i].clockMaxTickFrequency / 16);
+      break;
+
+    case CLOCK_MODE_SWEEP16MINUTE:
+      limitClockRate(&(ourTime[i]), 10 * 60 * clockHW[i].clockMaxTickFrequency / 16);
+      break;
+    }
+
+  // absolute clock rate limit is 5000 -> 1ms ticker interval
+  limitClockRate(&(ourTime[i]), 5000);
+  
   if (ourTime[i].rate10 != 0)
   {
     ourTime[i].secondTicker->attach(10.0 / ourTime[i].rate10 / 2, everyHardwareHalfSecond, i);
@@ -196,12 +219,26 @@ void handleNewTime(void)
       }
 
       uint32_t maxDelta = CLOCK_DELTA;
-      uint16_t clockMaxRate = clockHW[i].clockMaxTickFrequency;
-
-      // in minute mode, use one second window only and adapt maximum clock rate accordingly
-      if (clockHW[i].minuteMode)
+      uint16_t clockMaxRate;
+      
+      switch(clockHW[i].clockMode)
       {
-        clockMaxRate *= 60;
+        case CLOCK_MODE_SECOND:
+        default:
+          clockMaxRate = clockHW[i].clockMaxTickFrequency;
+          break;
+
+        case CLOCK_MODE_MINUTE:
+          clockMaxRate = clockHW[i].clockMaxTickFrequency * 60;
+          break;
+
+        case CLOCK_MODE_SWEEP16SECOND:
+          clockMaxRate = clockHW[i].clockMaxTickFrequency / 16;
+          break;
+
+        case CLOCK_MODE_SWEEP16MINUTE:
+          clockMaxRate = clockHW[i].clockMaxTickFrequency * 60 / 16;
+          break;
       }
 
       // simple cases first

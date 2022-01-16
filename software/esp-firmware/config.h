@@ -39,6 +39,7 @@
 #define FIELD_CLOCK_MAXRATE "maxRate"
 #define FIELD_CLOCK_PULSELENGTH "pulseLength"
 #define FIELD_CLOCK_MINUTEMODE "minutemode"
+#define FIELD_CLOCK_MODE "clockMode"
 
 #define FN_SERVER "server.txt"
 #define FIELD_SERVER_NAME "name"

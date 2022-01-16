@@ -54,6 +54,8 @@ typedef struct
   Ticker * secondTicker;
 } clockTime;
 
+enum clockModes { CLOCK_MODE_SECOND, CLOCK_MODE_MINUTE, CLOCK_MODE_SWEEP16SECOND, CLOCK_MODE_SWEEP16MINUTE };
+
 typedef struct
 {
   Ticker * resetTicker;
@@ -61,7 +63,7 @@ typedef struct
   uint8_t pin2;
   uint8_t tickCounter;
   bool nextEdgeHigh;
-  bool minuteMode;
+  clockModes clockMode;
   uint16_t clockPulseLength;
   uint16_t clockMaxTickFrequency;
 } clockInfo;
@@ -109,5 +111,10 @@ void clockServerRegister(void);
  * Check for and handle data from wiThrottle server
  */
 void clockHandler(void);
+
+/**
+ * If clock rate is larger than maximum, limit to maximum
+ */
+void limitClockRate(clockTime * c, uint16_t maximum);
 
 #endif

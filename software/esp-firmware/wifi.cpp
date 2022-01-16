@@ -304,14 +304,24 @@ void writeMainPage()
     if (id < NUM_CLOCKS)
     {
       startupTime[id].rate10 = (uint16_t) 10 * server.arg("clock.startupRate").toFloat();
-      if (startupTime[id].rate10 > 10 * clockHW[id].clockMaxTickFrequency && ! clockHW[id].minuteMode)
+      switch(clockHW[id].clockMode)
       {
-        startupTime[id].rate10 = 10 * clockHW[id].clockMaxTickFrequency;
-      }
-      if (startupTime[id].rate10 > 10 * 60 * clockHW[id].clockMaxTickFrequency && clockHW[id].minuteMode)
-      {
-        startupTime[id].rate10 = 10 * 60 * clockHW[id].clockMaxTickFrequency;
-      }
+        case CLOCK_MODE_SECOND:
+          limitClockRate(&(startupTime[id]), 10 * clockHW[id].clockMaxTickFrequency);
+          break;
+
+        case CLOCK_MODE_MINUTE:
+          limitClockRate(&(startupTime[id]), 10 * 60 * clockHW[id].clockMaxTickFrequency);
+          break;
+
+        case CLOCK_MODE_SWEEP16SECOND:
+          limitClockRate(&(startupTime[id]), 10 * clockHW[id].clockMaxTickFrequency / 16);
+          break;
+
+        case CLOCK_MODE_SWEEP16MINUTE:
+          limitClockRate(&(startupTime[id]), 10 * 60 * clockHW[id].clockMaxTickFrequency / 16);
+          break;
+      }          
       saveClockStartup(id);
     }
   }
@@ -324,7 +334,7 @@ void writeMainPage()
     {
       clockHW[id].clockMaxTickFrequency = server.arg("clock.maxClockRate").toInt();
       clockHW[id].clockPulseLength = server.arg("clock.pulseLength").toInt();
-      clockHW[id].minuteMode = server.hasArg("clock.minuteMode");
+      clockHW[id].clockMode = (clockModes) server.arg("clock.Mode").toInt();
 
       saveClockConfig(id);
     }
@@ -369,7 +379,7 @@ void writeMainPage()
                  + "<tr><td>Battery voltage: </td><td>" + batteryVoltage + " mV</td><td>" + (lowBattery ? "Battery LOW" : "" ) + "</td><td></td></tr>\r\n"
                  + "<tr><td>Firmware revision:</td><td colspan=3>" + REV + "</td></tr></table>\r\n"
                  + "<table><tr><td>Active WiFi network SSID:</td><td>" + (WiFi.isConnected() ? WiFi.SSID() : "not connected") + "</td></tr>"
-                 + "<tr><td>Signal strength:</td><td>" + (WiFi.isConnected() ? (String) WiFi.RSSI() + "dB" : "not connected") + "</td></tr></table>"
+                 + "<tr><td>Signal strength:</td><td>" + (WiFi.isConnected() ? (String) WiFi.RSSI() + "dB" : "not connected") + "</td></tr></table>\r\n"
                  + "<hr>";
 
   for (uint8_t i = 0; i < NUM_CLOCKS; i++)
@@ -380,21 +390,26 @@ void writeMainPage()
                    + "<tr><th colspan=2>Clock number: " + (i + 1) + "</th></tr>\r\n"
                    + "<tr><td>System time: </td><td><input type=\"text\" name=\"clock.time\" value=\"" + timeString + "\">"
                    + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\">"
-                   + "<input type=\"submit\" value=\"Set Time\"></td></tr></form>\r\n"
+                   + "<input type=\"submit\" value=\"Set Time\"></td></tr>\r\n"
                    + "<tr><td>Clock rate " + (i + 1) + ": </td><td>" + (ourTime[i].rate10 / 10.0) + "</td></tr></table></form>\r\n";
 
     snprintf(timeString, sizeof(timeString) / sizeof(timeString[0]), "%02d:%02d:%02d", startupTime[i].hours, startupTime[i].minutes, startupTime[i].seconds);
 
     resp        += String("<form action=\"index.html\" method=\"get\"><table border=0>")
-                   + "<tr><td>Startup time (format: H:M:S):</td><td><input type=\"text\" name=\"clock.startUp\" value=\"" + timeString + "\"></td></tr>"
-                   + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\">"
+                   + "<tr><td>Startup time (format: H:M:S):</td><td><input type=\"text\" name=\"clock.startUp\" value=\"" + timeString + "\">"
+                   + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\"></td></tr>"
                    + "<tr><td>Startup clock rate:</td><td><input type=\"text\" name=\"clock.startupRate\" value=\"" + startupTime[i].rate10 / 10.0 + "\"></td></tr>"
                    + "<tr><td colspan=2><input type=\"submit\" value=\"Save startup time and rate\"></td></tr></table></form>"
                    + "<form action=\"index.html\" method=\"get\"><table border=0>"
-                   + "<tr><td>Maximum clock tick frequency:</td><td><input type=\"text\" name=\"clock.maxClockRate\" value=\"" + clockHW[i].clockMaxTickFrequency + "\"></td></tr>"
-                   + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\">"
+                   + "<tr><td>Maximum clock tick frequency:</td><td><input type=\"text\" name=\"clock.maxClockRate\" value=\"" + clockHW[i].clockMaxTickFrequency + "\">"
+                   + "<input type=\"hidden\" name=\"clock.ID\" value=\"" + i + "\"></td></tr>"
                    + "<tr><td>Pulse length for clock (milliseconds):</td><td><input type=\"text\" name=\"clock.pulseLength\" value=\"" + clockHW[i].clockPulseLength + "\"></td></tr>"
-                   + "<tr><td>Clock ticks once per minute:</td><td><input type=\"checkbox\" name=\"clock.minuteMode\"" + (clockHW[i].minuteMode ? " checked" : "") + "></td></tr>"
+                   + "<tr><td>Clock mode:</td><td><select id=\"clock.Mode\" name=\"clock.Mode\">"
+                   + "<option value=\"" + CLOCK_MODE_SECOND + "\"" + (clockHW[i].clockMode == CLOCK_MODE_SECOND ? " selected " : "" ) + ">One tick per second</option>"
+                   + "<option value=\"" + CLOCK_MODE_MINUTE + "\"" + (clockHW[i].clockMode == CLOCK_MODE_MINUTE ? " selected " : "" ) + ">One tick per minute</option>"
+                   + "<option value=\"" + CLOCK_MODE_SWEEP16SECOND + "\"" + (clockHW[i].clockMode == CLOCK_MODE_SWEEP16SECOND ? " selected " : "" ) + ">Sweeping hand: 16 ticks per second</option>"
+                   + "<option value=\"" + CLOCK_MODE_SWEEP16MINUTE + "\"" + (clockHW[i].clockMode == CLOCK_MODE_SWEEP16MINUTE ? " selected " : "" ) + ">Sweeping hand: 16 ticks per minute</option>"
+                   + "</select></td></tr>"
                    + "<tr><td colspan=2><input type=\"submit\" value=\"Save clock configuration\"></td></tr></table></form>\r\n";
   }
 
