@@ -1,0 +1,10 @@
+= WiFi-JMRI-Clock: WiFi device driving cheap analog wall clocks with clock information from a wiThrottle server
+Heiko Rosemann
+0.1, 3-14-2022: Beginning documentation
+:description: Usage documentation, building instructions, schematics, part lists...
+:url-repo: https://github.com/newHeiko/WiFi-JMRI-Clock
+:icons: image
+:iconsdir: images/icons/
+:imagesdir: images/
+:toc:
+
