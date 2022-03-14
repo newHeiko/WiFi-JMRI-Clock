@@ -8,3 +8,11 @@ Heiko Rosemann
 :imagesdir: images/
 :toc:
 
+// Teaser image goes here
+
+[abstract]
+== Abstract
+
+This document describes the usage and configuration of the WiFi-JMRI-Clock - a device intended for model railroads to fetch the current "model time" from a wiThrottle server and adjust a cheap analog wall clock to the same time and rate. It also contains schematics and BOMs for the device as well as programming instructions and assembly tips.
+
+The most recent version of this document can be found at https://newheiko.github.io/WiFi-JMRI-Clock, https://github.com/newHeiko/WiFi-JMRI-Clock/raw/master/documentation/docu_en.pdf and https://github.com/newHeiko/WiFi-JMRI-Clock/blob/master/documentation/docu_en.adoc.
