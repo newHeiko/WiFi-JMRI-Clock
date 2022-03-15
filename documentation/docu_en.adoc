@@ -8,7 +8,7 @@ Heiko Rosemann
 :imagesdir: images/
 :toc:
 
-image::_DSC1137.jpg[WiFi-JMRI-Clock]
+image::DSC1137.jpg[WiFi-JMRI-Clock]
 
 [abstract]
 == Abstract
@@ -40,7 +40,7 @@ Inserting a pair of AA batteries will start up the WiFi-JMRI-Clock and begin dri
 
 [#clockControls]
 .Controls and features of the WiFi-JMRI-Clock
-image::_DSC1138.jpg[alt="Clock interface"]
+image::DSC1138.jpg[alt="Clock interface"]
 
 The green LED and its blink patterns, as described in <<ledTable>>, will allow some basic diagnosis of this process. The red LEDs are connected directly to the clock outputs, so they will flicker in sync with the pulses output to the clock.
 
