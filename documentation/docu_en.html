@@ -450,10 +450,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_abstract">Abstract</a></li>
+<li><a href="#_usage">Usage</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="images/_DSC1137.jpg" alt="WiFi-JMRI-Clock">
+</div>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="_abstract">Abstract</h2>
 <div class="sectionbody">
@@ -465,11 +475,69 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_usage">Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Inserting a pair of AA batteries will start up the WiFi-JMRI-Clock and begin driving the two clock outputs as configured. The device will try to connect to a WiFi network for 60 seconds (if one is enabled in the configuration), then after successful WiFi connect it will connect to a JMRI wiThrottle server on the network. In case no preconfigured WiFi network can be found during those 60 seconds, the device will switch to AP mode and open an access point itself to allow configuration.</p>
+</div>
+<table id="ledTable" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. LED status and its meaning for the WiFi-JMRI-Clock</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">LED pattern</th>
+<th class="tableblock halign-left valign-top">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Slow blinking (0.5Hz)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Attempting to connect to WiFi network</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fast blinking (2Hz)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Successful connection to WiFi network, attempting to connect to wiThrottle server and get time</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Steady off</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Successful connection to WiFi network and wiThrottle server, at least one time info packet received</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Steady on</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Successful connection to WiFi network, configuration mode</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">On, flickering off every 2s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No success connecting to WiFi network, setup access point for configuration</p></td>
+</tr>
+</tbody>
+</table>
+<div id="clockControls" class="imageblock">
+<div class="content">
+<img src="images/_DSC1138.jpg" alt="Clock interface">
+</div>
+<div class="title">Figure 1. Controls and features of the WiFi-JMRI-Clock</div>
+</div>
+<div class="paragraph">
+<p>The green LED and its blink patterns, as described in <a href="#ledTable">LED status and its meaning for the WiFi-JMRI-Clock</a>, will allow some basic diagnosis of this process. The red LEDs are connected directly to the clock outputs, so they will flicker in sync with the pulses output to the clock.</p>
+</div>
+<div class="paragraph">
+<p>The device will keep a total of three internal clocks running, two to keep track of the clocks connected to the two outputs and one to keep track of network time. The startup time and startup rate of each of the connected clocks can be set individually through the configuration website and the network time will start in sync with the first clock and at the same rate until the first time info packet has been received from the wiThrottle server.</p>
+</div>
+<div class="paragraph">
+<p>There are three pushbuttons on the WiFi-JMRI-Clock, as shown in <a href="#clockControls">Controls and features of the WiFi-JMRI-Clock</a>. The upper two offer a quick way to adjust the time on both connected clocks by a minute or an hour respectively and the third will enable/disable configuration mode when the device is connected to a wiThrottle server.</p>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.1<br>
-Last updated 2022-03-14 21:01:46 +0100
+Last updated 2022-03-15 21:40:39 +0100
 </div>
 </div>
 </body>
