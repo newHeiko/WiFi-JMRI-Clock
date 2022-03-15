@@ -327,7 +327,7 @@ void initClock(void)
 {
   for (uint8_t i = 0; i < NUM_CLOCKS; i++)
   {
-    memcpy(&ourTime[i], &startupTime, sizeof(clockTime));
+    memcpy(&ourTime[i], &startupTime[i], sizeof(clockTime));
     ourTime[i].secondTicker = new Ticker();
     ourTime[i].hours %= 12;
 
@@ -351,7 +351,7 @@ void initClock(void)
 
   setClockRate();
 
-  memcpy(&networkTime, &startupTime, sizeof(clockTime));
+  memcpy(&networkTime, &startupTime[0], sizeof(clockTime));
   networkTime.hours %= 12;
   networkTime.secondTicker = new Ticker();
 
